@@ -8,4 +8,5 @@ class Config:
     SHEET_ID = os.environ.get("SHEET_ID")
     SERVICE_ACCOUNT_FILE = os.environ.get("SERVICE_ACCOUNT_FILE", "service_account.json")
     FORM_DATE_FORMAT = os.environ.get("FORM_DATE_FORMAT", "%Y-%m-%d")
+    FORM_MONTH_FORMAT = os.environ.get("FORM_MONTH_FORMAT", "%Y-%m")
     GOOGLE_SHEET_DATE_FORMAT = os.environ.get("GOOGLE_SHEET_DATE_FORMAT", "%d/%m/%Y")

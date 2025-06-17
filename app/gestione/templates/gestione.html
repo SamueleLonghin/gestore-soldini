@@ -7,13 +7,20 @@
 {% block content %}
 <h1 class="">{{ title }}</h1>
 
-<h3 class="mb-4">Filtra Spese</h3>
-{% include "_filtro.html" %}
 
-{% include "_spese.html" %}
+<div class="border border-2 border-secondary rounded p-3 mb-4 shadow">
 
-<hr>
-<h3 class="mb-4">Inserisci Spesa</h3>
-{% include "_inserisci.html" %}
+    <h3 class="">Filtra Spese</h3>
+    {% include "_filtro.html" %}
+    <h3>Spese</h3>
+    {% include "_spese.html" %}
+</div>
+
+<div class="border border-2 border-secondary rounded p-3 mb-4 shadow">
+
+    <h3 class="">Inserisci Spesa</h3>
+    {% include "_inserisci_spesa.html" %}
+
+</div>
 
 {% endblock %}

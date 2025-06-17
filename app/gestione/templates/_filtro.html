@@ -1,25 +1,26 @@
-<form method="post" class="d-flex flex-row flex-wrap gap-3 align-items-start">
-    <div class="mb-3 flex-fill">
-        <label for="descrizione" class="form-label">Descrizione</label>
+<form method="post" class="d-flex flex-row flex-wrap gap-3 align-items-start mb-4"
+    action="{{ url_for('gestione.visualizza_spese', file_id=file_id) }}">
+    <div class=" flex-fill">
+        <label for="descrizione" class="form-label mb-0">Descrizione</label>
         <input type="text" class="form-control" id="descrizione" name="descrizione" placeholder="Descrizione"
-            value="{{ request.args.q or '' }}">
+            value="{{ request.args.descrizione or '' }}">
     </div>
-    <div class="mb-3 flex-fill">
-        <label for="categoria" class="form-label">Categoria</label>
+    <div class=" flex-fill">
+        <label for="categoria" class="form-label mb-0">Categoria</label>
         <input type="text" class="form-control" name="categoria" placeholder="Categoria"
             value="{{ request.args.categoria or '' }}">
     </div>
 
-    <div class="mb-3 flex-fill">
+    <div class=" flex-fill">
         <label class="form-label mb-0">Data da</label>
         <input type="date" class="form-control" name="data_da" value="{{ request.args.data_da or '' }}">
     </div>
-    <div class="mb-3 flex-fill">
+    <div class=" flex-fill">
         <label class="form-label mb-0">Data a</label>
         <input type="date" class="form-control" name="data_a" value="{{ request.args.data_a or '' }}">
     </div>
 
-    <div class="mb-3 align-self-end">
+    <div class=" align-self-end">
         <button type="submit" class="btn btn-primary">Ricerca</button>
     </div>
 </form>
