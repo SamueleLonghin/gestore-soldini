@@ -15,8 +15,8 @@ def create_app():
 
     app.register_blueprint(main)
 
-    from .gestione import gestione
+    from .gestione import gestionebp
 
-    app.register_blueprint(gestione)
+    app.register_blueprint(gestionebp)
 
     return app

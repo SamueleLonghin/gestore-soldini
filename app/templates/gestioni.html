@@ -19,7 +19,7 @@ Gestione Spese
                     <ul class="list-group">
                         {% for file in files %}
                         <li class="list-group-item">
-                            <a href="{{ url_for('gestione.visualizza_spese', file_id=file.id) }}">{{ file.name }}</a>
+                            <a href="{{ url_for('gestione.gestione', file_id=file.id) }}">{{ file.name }}</a>
                         </li>
                         {% endfor %}
                     </ul>
