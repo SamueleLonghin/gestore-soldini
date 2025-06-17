@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}
+Gestione Spese
+{% endblock %}
+
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h1 class="card-title mb-3 text-dark">Benvenuto {{ user.name }}</h1>
+                    <p class="card-text mb-4">Email: <span class="text-secondary">{{ user.email }}</span></p>
+                    <hr>
+                    {% if files %}
+                    <h2 class="h4 mb-3 text-dark">Le mie gestioni</h2>
+                    <ul class="list-group">
+                        {% for file in files %}
+                        <li class="list-group-item">
+                            <a href="{{ url_for('gestione.visualizza_spese', file_id=file.id) }}">{{ file.name }}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <h2 class="h4 mb-3 text-dark">Nessuna gestione disponibile</h2>
+                    <p>Per iniziare una gestione, assicurati di:</p>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item">Creare un file Google Sheets con struttura compatibile</li>
+                        <li class="list-group-item">Condividere il file con il tuo utente Google (email: {{ user.email
+                            }})</li>
+                        <li class="list-group-item">Condividere lo stesso file anche con il service account (vedi
+                            configurazione)</li>
+                    </ul>
+                    <div class="alert alert-info" role="alert">
+                        Una volta fatto, aggiorna la pagina per vedere le gestioni disponibili.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+<form method="post" class="d-flex flex-row flex-wrap gap-3 align-items-start" action="{{ url_for('gestione.aggiungi_spesa', file_id=file_id) }}">
+    <div class="mb-3 flex-fill">
+        <label for="data" class="form-label">Data</label>
+        <input type="date" class="form-control" id="data" name="data" required>
+    </div>
+    <div class="mb-3 flex-fill">
+        <label for="euro" class="form-label">Importo</label>
+        <input type="number" step="0.01" class="form-control" id="euro" name="euro" required>
+    </div>
+    <div class="mb-3 flex-fill">
+        <label for="descrizione" class="form-label">Descrizione</label>
+        <input type="text" class="form-control" id="descrizione" name="descrizione" required>
+    </div>
+    <div class="mb-3 flex-fill">
+        <label for="categoria" class="form-label">Categoria</label>
+        <select class="form-select" name="categoria" required>
+            {% for tipo, sottocategorie in categorie.items() %}
+            <optgroup label="{{ tipo }}">
+                {% for categoria in sottocategorie %}
+                <option value="{{ categoria }}">{{ categoria }}</option>
+                {% endfor %}
+            </optgroup>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-3 align-self-end">
+        <button type="submit" class="btn btn-primary">Inserisci Spesa</button>
+    </div>
+</form>

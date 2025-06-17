@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+<h1 class="">{{ title }}</h1>
+
+<h3 class="mb-4">Filtra Spese</h3>
+{% include "_filtro.html" %}
+
+{% include "_spese.html" %}
+
+<hr>
+<h3 class="mb-4">Inserisci Spesa</h3>
+{% include "_inserisci.html" %}
+
+{% endblock %}
