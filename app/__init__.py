@@ -27,6 +27,9 @@ def create_app():
 
     app.config.from_object("config.Config")
 
+    # Rendi `attribute` disponibile nei template
+    app.jinja_env.globals["attribute"] = getattr
+
     for k, v in app.config.items():
         print("Config: ", k, "->", v)
 

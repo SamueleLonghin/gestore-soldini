@@ -6,7 +6,7 @@ from googleapiclient.discovery import build
 from flask import current_app
 import os
 
-from app.services.tools import parse_date
+from app.services.tools import parse_date, prepare_data
 import re
 
 INGRESSO_COLONNE = {
@@ -185,11 +185,20 @@ def add_ricorrente(file_id, ricorrenza):
     print("Risultato append:", res)
 
 
+def update_row(file_id, range_name, row):
+    service = get_service()
+    service.spreadsheets().values().update(
+        spreadsheetId=file_id,
+        range=range_name,
+        valueInputOption="USER_ENTERED",
+        body={"values": [row]},
+    ).execute()
+
+
 def update_ricorrente(file_id, id_ricorrente, ricorrenza):
     ricorrenti_tab = os.getenv("SHEET_TAB_SPESE_RICORRENTI")
     range_name = f"{ricorrenti_tab}!{id_ricorrente}:{id_ricorrente}"
-    print(f"Aggiorno {range_name} con {ricorrenza}")
-    service = get_service()
+
     row = [
         ricorrenza.get("nome", ""),
         ricorrenza.get("categoria", ""),
@@ -198,12 +207,7 @@ def update_ricorrente(file_id, id_ricorrente, ricorrenza):
         ricorrenza.get("unita_ricorrenza", ""),
         ricorrenza.get("euro", ""),
     ]
-    service.spreadsheets().values().update(
-        spreadsheetId=file_id,
-        range=range_name,
-        valueInputOption="USER_ENTERED",
-        body={"values": [row]},
-    ).execute()
+    update_row(file_id, range_name, row)
 
 
 def get_categorie(file_id):
@@ -288,23 +292,24 @@ def get_spese_ricorrenti(file_id):
     return ricorrenti
 
 
-def update_ingresso(file_id, id_ingresso, attributo, valore):
-    service = get_service()
-    ingressi_tab = os.getenv("SHEET_TAB_INGRESSI", "Ingressi")
-    # Aggiorna la cella della prima colonna (colonna A) alla riga id_ingresso con il valore "data"
-    lettera = INGRESSO_COLONNE[attributo]
-    range_name = f"{ingressi_tab}!{lettera}{id_ingresso}:{lettera}{id_ingresso}"
-    print(f"Aggiorno {range_name} con {valore}")
-    service.spreadsheets().values().update(
-        spreadsheetId=file_id,
-        range=range_name,
-        valueInputOption="USER_ENTERED",
-        body={"values": [[valore]]},
-    ).execute()
+def update_ingresso(file_id, id_ingresso, ingresso):
+    ingressi_tab = os.getenv("SHEET_TAB_INGRESSI")
+    range_name = f"{ingressi_tab}!{id_ingresso}:{id_ingresso}"
+
+    row = [
+        ingresso.get("data", ""),
+        ingresso.get("mese", ""),
+        ingresso.get("anno", ""),
+        ingresso.get("euro", ""),
+        ingresso.get("descrizione", ""),
+        ingresso.get("categoria", ""),
+        ingresso.get("note", ""),
+        ingresso.get("conto", ""),
+    ]
+
+    update_row(file_id, range_name, row)
 
 
 def add_data_ingresso(file_id, id_ingresso, data):
-    data = parse_date(data, current_app.config["FORM_DATE_FORMAT"]).strftime(
-        current_app.config["GOOGLE_SHEET_DATE_FORMAT"]
-    )
+    data = prepare_data(data)
     update_ingresso(file_id, id_ingresso, "data", data)

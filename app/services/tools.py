@@ -16,7 +16,9 @@ def google_sheets_serial_to_date(serial_number):
 
 def date_to_google_sheets_serial(date_obj):
     epoch = datetime(1899, 12, 30).date()  # Google Sheets epoch
-    return (date_obj.date() - epoch).days
+    if isinstance(date_obj, datetime):
+        date_obj = date_obj.date()
+    return (date_obj - epoch).days
 
 
 

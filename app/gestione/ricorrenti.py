@@ -39,11 +39,11 @@ def ricorrenti(file_id):
     return render_template(
         "ricorrenti.html",
         ricorrenti=ricorrenti,
+        rows=ricorrenti,
         file_id=file_id,
         title=title,
         categorie=categorie,
         headers=headers,
-        rows=ricorrenti,
     )
 
 

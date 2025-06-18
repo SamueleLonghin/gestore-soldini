@@ -11,7 +11,7 @@ from app.services.google_auth import login_is_required
 from flask import current_app
 from datetime import datetime
 
-from app.services.tools import prepare_data
+from app.services.tools import parse_date, prepare_data
 
 
 ingressibp = Blueprint(
@@ -28,20 +28,34 @@ def ingressi(file_id):
     ingressi = get_ingressi(file_id)
     oggi = datetime.now().strftime(current_app.config["FORM_DATE_FORMAT"])
     categorie = get_categorie(file_id)
+
+    headers = {
+        "data": "Data di Accreditamento:widget:widget_set_date",
+        "mese": "Mese",
+        "anno": "Anno",
+        "descrizione": "Descrizione",
+        "euro": "Importo:number",
+        "categoria": "Categoria",
+        "note": "Note",
+        "conto": "Conto di Accreditamento",
+    }
     return render_template(
         "ingressi.html",
         file_id=file_id,
         ingressi=ingressi,
         oggi=oggi,
         categorie=categorie,
+        headers=headers,
+        rows=ingressi,
     )
 
 
 @ingressibp.route("/salva_data", methods=["POST"])
 @login_is_required
 def salva_data(file_id):
-    ingresso_id = request.form.get("ingresso_id")
+    ingresso_id = request.form.get("row_id")
     data = request.form.get("data")
+    data = parse_date(data, current_app.config["FORM_DATE_FORMAT"])
 
     print("Salvataggio data ingresso:", ingresso_id, data)
 
@@ -53,11 +67,37 @@ def salva_data(file_id):
 @ingressibp.route("/modifica", methods=["POST"])
 @login_is_required
 def modifica(file_id):
-    ingresso_id = request.form.get("ingresso_id")
-    attributo = request.form.get("attributo")
-    valore = request.form.get("valore")
+    ricorrente_id = request.form.get("row_id")
 
-    update_ingresso(file_id, ingresso_id, attributo, valore)
+    data = request.form.get("data")
+    descrizione = request.form.get("descrizione")
+    euro = request.form.get("euro")
+    categoria = request.form.get("categoria")
+    mese = request.form.get("mese")
+    anno = request.form.get("anno")
+
+    data_google = ""
+
+    if data:
+        data_parsed = datetime.strptime(data, current_app.config["FORM_DATE_FORMAT"])
+        data_google = prepare_data(data_parsed)
+    print(f"Data convertita: {data} -> {data_google}")
+
+    print(
+        f"Modifico ingresso {ricorrente_id}: {descrizione}, {data_google}, {euro}, {categoria}, {mese}, {anno}"
+    )
+    ingresso = {
+        "data": data_google,
+        "euro": euro,
+        "descrizione": descrizione,
+        "categoria": categoria,
+        "mese": mese,
+        "anno": anno,
+        "note": "",
+        "conto": "",
+    }
+
+    update_ingresso(file_id, ricorrente_id, ingresso)
 
     return redirect(request.referrer)
 
