@@ -36,7 +36,7 @@ def ingressi(file_id):
         "descrizione": "Descrizione",
         "euro": "Importo:number",
         "categoria": "Categoria",
-        "note": "Note",
+        "note": "Note:textarea",
         "conto": "Conto di Accreditamento",
     }
     return render_template(
@@ -75,6 +75,8 @@ def modifica(file_id):
     categoria = request.form.get("categoria")
     mese = request.form.get("mese")
     anno = request.form.get("anno")
+    conto = request.form.get("conto")
+    note = request.form.get("note")
 
     data_google = ""
 
@@ -93,8 +95,8 @@ def modifica(file_id):
         "categoria": categoria,
         "mese": mese,
         "anno": anno,
-        "note": "",
-        "conto": "",
+        "note": note,
+        "conto": conto,
     }
 
     update_ingresso(file_id, ricorrente_id, ingresso)
