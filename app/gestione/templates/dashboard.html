@@ -34,7 +34,7 @@
                 <span class="btn btn-link btn-sm text-secondary p-0">Vedi tutte le Spese Ricorrenti</span>
             </div>
         </a>
-        <!-- Mattonella Spese Ricorrenti (normale) -->
+        <!-- Mattonella Ingressi -->
         <a class="dashboard-tile border border-2 border-secondary rounded p-3 shadow text-center bg-light text-decoration-none text-reset d-block h-100 grid-item-ingressi"
             href="{{ url_for('gestione.ingressi.ingressi', file_id=file_id) }}" style="cursor: pointer;">
             <h4 class="mb-2">Ingressi</h4>
@@ -44,13 +44,49 @@
             </div>
         </a>
 
+        <!-- Mattonella Mese -->
+        <div
+            class="dashboard-tile border border-2 border-secondary rounded p-3 shadow text-center bg-light d-block h-100 grid-item-mese">
+            <h4 class="mb-2 text-nowrap"> Questo Mese </h4>
+            <div class="mb-2">
+                <strong> Ingressi Previsti: </strong>
+                <span class="text-success fw-bold">{{ mese.ingressi_previsti }}€</span>
+            </div>
+            <div class="mb-2">
+                <strong> Ingressi Effettivi: </strong>
+                <span class="text-info fw-bold">{{ mese.ingressi }}€</span>
+            </div>
+            <div class="mb-2">
+                <strong> Spese: </strong>
+                <span class="text-danger fw-bold">{{ mese.spese }}€</span>
+            </div>
+        </div>
+
+        <!-- Mattonella Anno -->
+        <div
+            class="dashboard-tile border border-2 border-secondary rounded p-3 shadow text-center bg-light d-block h-100 grid-item-anno">
+            <h4 class="mb-2"> Quest'Anno </h4>
+            <div class="mb-2">
+                <strong> Ingressi Previsti: </strong>
+                <span class="text-success fw-bold">{{ anno.ingressi_previsti }}€</span>
+            </div>
+            <div class="mb-2">
+                <strong> Ingressi Effettivi: </strong>
+                <span class="text-info fw-bold">{{ anno.ingressi }}€</span>
+            </div>
+            <div class="mb-2">
+                <strong> Spese: </strong>
+                <span class="text-danger fw-bold">{{ anno.spese }}€</span>
+            </div>
+        </div>
+
 
     </div>
 
     <style>
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(5, auto);
             grid-template-rows: repeat(4, auto);
             gap: 1.5rem;
         }
@@ -65,7 +101,15 @@
             grid-column: 4 / span 2;
         }
 
-        .grid-item-ricorrenti {
+        .grid-item-ricorrenti,
+        .grid-item-ingressi,
+        .grid-item-mese,
+        .grid-item-anno {
+            grid-row: auto;
+            grid-column: auto;
+        }
+
+        /* .grid-item-ricorrenti {
             grid-row: 2;
             grid-column: 4 / span 1;
         }
@@ -73,23 +117,24 @@
         .grid-item-ingressi {
             grid-row: auto;
             grid-column: 5 / span 1;
-        }
+        } */
+
 
         /* Responsive: schermi <= 900px */
         @media (max-width: 900px) {
             .dashboard-grid {
-                grid-template-columns: repeat(4, auto);
+                grid-template-columns: repeat(3, 1fr);
                 grid-template-rows: auto auto auto;
             }
 
             .grid-item-spese {
                 grid-row: 1 / span 3;
-                grid-column: 1 / span 4;
+                grid-column: 1 / span 2;
             }
 
             .grid-item-inserisci-spesa {
                 grid-row: 1 / 2;
-                grid-column: 5 / span 1;
+                grid-column: 3;
             }
 
             .grid-item-ricorrenti {
@@ -105,17 +150,27 @@
 
         /* Responsive: schermi <= 600px */
         @media (max-width: 600px) {
+
             .dashboard-grid {
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: repeat(2, 1fr);
                 grid-template-rows: auto auto auto auto;
             }
-
+            
+            
+            
             .grid-item-spese,
-            .grid-item-inserisci-spesa,
             .grid-item-ricorrenti,
-            .grid-item-saldo {
-                grid-column: 1 / 2;
+            .grid-item-inserisci-spesa,
+            .grid-item-anno,
+            .grid-item-mese {
+                grid-column: auto;
                 grid-row: auto;
+            }
+            
+            .grid-item-inserisci-spesa,
+            .grid-item-spese {
+                grid-column: 1 / span 2;
+
             }
         }
     </style>

@@ -32,7 +32,14 @@ def before_request():
 def gestione(file_id):
     spese = get_spese_from_file(file_id)
     categorie = get_categorie(file_id)
+    mese = {"spese": 0, "ingressi": 0, "ingressi_previsti": 0}
+    anno = {"spese": 0, "ingressi": 0, "ingressi_previsti": 0}
 
     return render_template(
-        "dashboard.html", spese=spese, file_id=file_id, categorie=categorie
+        "dashboard.html",
+        spese=spese,
+        file_id=file_id,
+        categorie=categorie,
+        mese=mese,
+        anno=anno,
     )
