@@ -37,7 +37,7 @@ def ricorrenti(file_id):
     }
 
     return render_template(
-        "ricorrenti2.html",
+        "ricorrenti.html",
         ricorrenti=ricorrenti,
         file_id=file_id,
         title=title,
