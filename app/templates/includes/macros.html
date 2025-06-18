@@ -1,0 +1,76 @@
+{% macro render_table(headers, rows, action_url) %}
+<div class="table-responsive">
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                {% for key, header in headers.items() %}
+                <th>{{ header.split(':')[0] }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <form action="{{action_url}}" method="post">
+                <input type="hidden" value="{{row.id}}" name="row_id">
+                <tr>
+                    {% for key, header in headers.items() %}
+                    {% set parts = header.split(':') %}
+                    {% set field = parts[0] %}
+                    {% set type = parts[1] if parts|length > 1 else 'text' %}
+
+                    <td class="">
+                        {% if parts|length > 2 and type == "options" %}
+                        {{ row[key] }}
+                        <select class="form-select form-select-sm collapse mt-2 collapse-modifica-{{ row.id }}"
+                            name="{{ key }}" id="{{ field }}-{{ row.id }}">
+                            {% for option in parts[2].split('|') %}
+                            <option value="{{ option }}" {% if row[key]==option %}selected{% endif %}>{{ option }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        {% elif parts|length > 2 %}
+                        {{ row[key] }}
+                        <div class="collapse mt-2 collapse-modifica-{{ row.id }}">
+                            <input type="{{ type }}" class="form-control form-control-sm" name="{{ key }}"
+                                id="{{ field }}-{{ row.id }}" value="{{ row[parts[2]] }}" required>
+                        </div>
+                        {% elif type == "date" %}
+                        {{ row[key] | date_display }}
+                        <div class="collapse mt-2 collapse-modifica-{{ row.id }}">
+                            <input type="date" class="form-control form-control-sm" name="{{ key }}"
+                                id="{{ field }}-{{ row.id }}" value="{{ row[key] | date_form }}" required>
+                        </div>
+                        {% elif type == "number" %}
+                        {{ row[key] }}
+                        <div class="collapse mt-2 collapse-modifica-{{ row.id }}">
+                            <input type="number" class="form-control form-control-sm" name="{{ key }}"
+                                id="{{ field }}-{{ row.id }}" value="{{ row[key] }}" min="0.00" max="1000000.00" step="0.01" required>
+                        </div>
+                        {% else %}
+                        {{ row[key] }}
+                        <div class="collapse mt-2 collapse-modifica-{{ row.id }}">
+                            <input type="{{ type }}" class="form-control form-control-sm" name="{{ key }}"
+                                id="{{ field }}-{{ row.id }}" value="{{ row[key] }}" required>
+                        </div>
+                        {% endif %}
+                    </td>
+                    {% endfor %}
+                    <td>
+
+                        <span class="ms-1" role="button" data-bs-toggle="collapse"
+                            data-bs-target=".collapse-modifica-{{ row.id }}" aria-expanded="false" aria-controls="">
+                            <i class="bi bi-pencil"></i>
+                        </span>
+                        <div class="collapse mt-2 collapse-modifica-{{ row.id }}">
+                            <input type="submit" class="form-control form-control-sm" value="Salva Modifiche">
+                        </div>
+
+                    </td>
+            </form>
+            </tr>
+
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endmacro %}

@@ -11,7 +11,7 @@
         <tbody>
             {% for spesa in spese %}
             <tr>
-                <td>{{ spesa.data }}</td>
+                <td>{{ spesa.data | date_display }}</td>
                 <td>{{ spesa.euro }}</td>
                 <td>{{ spesa.descrizione }}</td>
                 <td>{{ spesa.categoria }}</td>

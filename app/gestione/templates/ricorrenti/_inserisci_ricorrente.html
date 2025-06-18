@@ -1,0 +1,42 @@
+<form method="post" class="d-flex flex-row flex-wrap gap-3 align-items-start"
+    action="{{ url_for('gestione.ricorrenti.aggiungi', file_id=file_id) }}">
+    <div class="flex-fill">
+        <label for="nome" class="form-label mb-0">Nome</label>
+        <input type="text" class="form-control" id="nome" name="nome" required>
+    </div>
+    <div class="flex-fill">
+        <label for="categoria" class="form-label mb-0">Categoria</label>
+        <select class="form-select" name="categoria" required>
+            {% for tipo, sottocategorie in categorie.items() %}
+            <optgroup label="{{ tipo }}">
+                {% for categoria in sottocategorie %}
+                <option value="{{ categoria }}">{{ categoria }}</option>
+                {% endfor %}
+            </optgroup>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="flex-fill">
+        <label for="data" class="form-label mb-0">Data di Inizio</label>
+        <input type="date" class="form-control" id="data" name="data" required>
+    </div>
+    <div class="flex-fill">
+        <label for="tipo_ricorrenza" class="form-label mb-0">Tipo di Ricorrenza</label>
+        <select class="form-select" id="tipo_ricorrenza" name="tipo_ricorrenza" required>
+            <option value="giorno">Giornaliera</option>
+            <option value="mese">Mensile</option>
+            <option value="anno">Annuale</option>
+        </select>
+    </div>
+    <div class="flex-fill">
+        <label for="unita_ricorrenza" class="form-label mb-0">Unità di Ricorrenza</label>
+        <input type="number" class="form-control" id="unita_ricorrenza" name="unita_ricorrenza" value="1" required>
+    </div>
+    <div class="flex-fill">
+        <label for="importo" class="form-label mb-0">Importo</label>
+        <input type="number" step="0.01" class="form-control" id="importo" name="euro" required>
+    </div>
+    <div class="align-self-end">
+        <button type="submit" class="btn btn-primary">Inserisci Ricorrenza</button>
+    </div>
+</form>

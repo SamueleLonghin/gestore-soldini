@@ -36,7 +36,15 @@ def get_service():
 def get_spreadsheet_data(file_id, range_name, with_row_id=False):
     service = get_service()
     sheet = service.spreadsheets()
-    result = sheet.values().get(spreadsheetId=file_id, range=range_name).execute()
+    result = (
+        sheet.values()
+        .get(
+            spreadsheetId=file_id,
+            range=range_name,
+            valueRenderOption="UNFORMATTED_VALUE",
+        )
+        .execute()
+    )
     values = result.get("values", [])
 
     if not with_row_id:
@@ -67,24 +75,23 @@ def get_sheet_id(service, file_id, sheet_name):
 
 
 def get_spese_from_file(file_id):
-    spese_tab = os.getenv("SHEET_TAB_SPESA", "ELENCO SPESE")
+    spese_tab = os.getenv("SHEET_TAB_SPESA")
     rows = get_spreadsheet_data(file_id, spese_tab + "!A2:F")
     spese = []
     for row in rows:
         if len(row) < 6:
             print("Riga non valida:", row)
             continue
+
+        data = parse_date(row[0], current_app.config["GOOGLE_SHEET_DATE_FORMAT"])
         spese.append(
             {
-                "data": row[0],
+                "data": data,
                 "mese": row[1],
                 "anno": row[2],
                 "euro": row[3],
                 "descrizione": row[4],
                 "categoria": row[5],
-                "data_value": parse_date(
-                    row[0], current_app.config["GOOGLE_SHEET_DATE_FORMAT"]
-                ),
             }
         )
     return spese
@@ -121,7 +128,7 @@ def add_spesa(file_id, spesa):
     spesa: dizionario con i valori [data, euro, descrizione, categoria]
     """
     print("Aggiungo spesa:", spesa)
-    spese_tab = os.getenv("SHEET_TAB_SPESA_INPUT", "ELENCO SPESE")
+    spese_tab = os.getenv("SHEET_TAB_SPESA_INPUT")
     spesa["euro"] = str(spesa["euro"]).replace(".", ",")  # Converti in formato europeo
     row = [
         spesa.get("data", ""),
@@ -138,7 +145,7 @@ def add_ingresso(file_id, ingresso):
     ingresso: dizionario con i valori [data, mese, anno, euro, descrizione, categoria, note, conto]
     """
     print("Aggiungo ingresso:", ingresso)
-    ingressi_tab = os.getenv("SHEET_TAB_INGRESSI", "ELENCO INGRESSI")
+    ingressi_tab = os.getenv("SHEET_TAB_INGRESSI")
     ingresso["euro"] = str(ingresso["euro"]).replace(
         ".", ","
     )  # Converti in formato europeo
@@ -154,38 +161,49 @@ def add_ingresso(file_id, ingresso):
     ]
     res = append_row_to_sheet(file_id, ingressi_tab, row)
     print("Risultato append:", res)
-    #  """
-    # Inserisce un nuovo ingresso in testa al file (seconda riga, dopo l'intestazione).
-    # ingresso: lista o tupla con i valori [data, mese, anno, euro, descrizione, categoria]
-    # """
-    # print("Aggiungo ingresso:", ingresso)
-    # service = get_service()
-    # ingressi_tab = os.getenv("SHEET_TAB_INGRESSI", "Ingressi")
-    # # Trova l'ultima riga non vuota
-    # rows = get_spreadsheet_data(file_id, f"{ingressi_tab}!A2:F")
-    # next_row = len(rows) + 2  # +2 perché A2 è la prima riga dati
-    # range_name = f"{ingressi_tab}!A{next_row}:F{next_row}"
 
-    # ingresso["euro"] = str(ingresso["euro"]).replace(
-    #     ".", ","
-    # )  # Converti in formato europeo
-    # row = [
-    #     ingresso["data"],
-    #     ingresso["mese"],
-    #     ingresso["anno"],
-    #     ingresso["euro"],
-    #     ingresso["descrizione"],
-    #     ingresso["categoria"],
-    #     ingresso["note"],
-    #     ingresso["conto"],
-    # ]
 
-    # service.spreadsheets().values().update(
-    #     spreadsheetId=file_id,
-    #     range=range_name,
-    #     valueInputOption="USER_ENTERED",
-    #     body={"values": [row]},
-    # ).execute()
+def add_ricorrente(file_id, ricorrenza):
+    """
+    Inserisce un nuovo ricorrente in fondo al file.
+    ricorrenza: dizionario con i valori [nome, categoria, data_inizio, tipo_ricorrenza, unita_ricorrenza, euro]
+    """
+    print("Aggiungo ricorrente:", ricorrenza)
+    ricorrenti_tab = os.getenv("SHEET_TAB_SPESE_RICORRENTI")
+    ricorrenza["euro"] = str(ricorrenza["euro"]).replace(
+        ".", ","
+    )  # Converti in formato europeo
+    row = [
+        ricorrenza.get("nome", ""),
+        ricorrenza.get("categoria", ""),
+        ricorrenza.get("data", ""),
+        ricorrenza.get("tipo_ricorrenza", ""),
+        ricorrenza.get("unita_ricorrenza", ""),
+        ricorrenza.get("euro", ""),
+    ]
+    res = append_row_to_sheet(file_id, ricorrenti_tab, row)
+    print("Risultato append:", res)
+
+
+def update_ricorrente(file_id, id_ricorrente, ricorrenza):
+    ricorrenti_tab = os.getenv("SHEET_TAB_SPESE_RICORRENTI")
+    range_name = f"{ricorrenti_tab}!{id_ricorrente}:{id_ricorrente}"
+    print(f"Aggiorno {range_name} con {ricorrenza}")
+    service = get_service()
+    row = [
+        ricorrenza.get("nome", ""),
+        ricorrenza.get("categoria", ""),
+        ricorrenza.get("data", ""),
+        ricorrenza.get("tipo_ricorrenza", ""),
+        ricorrenza.get("unita_ricorrenza", ""),
+        ricorrenza.get("euro", ""),
+    ]
+    service.spreadsheets().values().update(
+        spreadsheetId=file_id,
+        range=range_name,
+        valueInputOption="USER_ENTERED",
+        body={"values": [row]},
+    ).execute()
 
 
 def get_categorie(file_id):
@@ -194,8 +212,8 @@ def get_categorie(file_id):
     Utilizza le variabili d'ambiente SHEET_TAB_CATEGORIE e SHEET_RANGE_CATEGORIE.
     Il range deve contenere due colonne: 'Categoria' e 'tipo'.
     """
-    categorie_tab = os.getenv("SHEET_TAB_CATEGORIE", "Categorizzazione")
-    categorie_range = os.getenv("SHEET_RANGE_CATEGORIE", "A2:B")
+    categorie_tab = os.getenv("SHEET_TAB_CATEGORIE")
+    categorie_range = os.getenv("SHEET_RANGE_CATEGORIE")
     rows = get_spreadsheet_data(file_id, f"{categorie_tab}!{categorie_range}")
     categorie_by_tipo = {}
     for row in rows:
@@ -214,8 +232,8 @@ def get_ingressi(file_id):
     Utilizza le variabili d'ambiente SHEET_TAB_CATEGORIE e SHEET_RANGE_CATEGORIE.
     Il range deve contenere otto colonne: DATA di Accreditamento, MESE, ANNO, EURO, DESCRIZIONE, CATEGORIA, NOTE, CONTO di Accreditamento.
     """
-    categorie_tab = os.getenv("SHEET_TAB_INGRESSI", "Ingressi")
-    categorie_range = os.getenv("SHEET_RANGE_INGRESSI", "A2:H")
+    categorie_tab = os.getenv("SHEET_TAB_INGRESSI")
+    categorie_range = os.getenv("SHEET_RANGE_INGRESSI")
     rows = get_spreadsheet_data(
         file_id, f"{categorie_tab}!{categorie_range}", with_row_id=True
     )
@@ -227,8 +245,7 @@ def get_ingressi(file_id):
         ingressi.append(
             {
                 "id": id,
-                "data": data,
-                "data_value": parse_date(
+                "data": parse_date(
                     data, current_app.config["GOOGLE_SHEET_DATE_FORMAT"]
                 ),
                 "mese": mese,
@@ -241,6 +258,34 @@ def get_ingressi(file_id):
             }
         )
     return ingressi
+
+
+def get_spese_ricorrenti(file_id):
+    """
+    Restituisce le spese ricorrenti dal foglio dedicato.
+    Le colonne sono: NOME SPESA RICORRENTE, CATEGORIA, DATA INIZIO, TIPO RICORRENZA, UNITÀ DI RICORRENZA, EURO
+    """
+    tab = os.getenv("SHEET_TAB_SPESE_RICORRENTI")
+    range_ = os.getenv("SHEET_RANGE_SPESE_RICORRENTI")
+    rows = get_spreadsheet_data(file_id, f"{tab}!{range_}", with_row_id=True)
+
+    ricorrenti = []
+    for row in rows:
+        data = parse_date(row[3], current_app.config["GOOGLE_SHEET_DATE_FORMAT"])
+        ricorrenti.append(
+            {
+                "id": row[0],
+                "nome": row[1],
+                "categoria": row[2],
+                "data_inizio": data,
+                "tipo_ricorrenza": row[4],
+                "unita_ricorrenza": row[5],
+                "euro": row[6],
+                "euro_value": row[6],
+            }
+        )
+
+    return ricorrenti
 
 
 def update_ingresso(file_id, id_ingresso, attributo, valore):

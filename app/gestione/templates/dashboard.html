@@ -6,14 +6,15 @@
 
 {% block large_content %}
 <div class="container-fluid">
-    <h1 class="">{{ title }}</h1>
+    <h1 class="text-center">{{ title }}</h1>
     <div class="dashboard-grid">
         <!-- Mattonella Totale Spese (più alta) -->
         <div
             class="dashboard-tile tile-tall border border-2 border-secondary rounded p-3 shadow text-center bg-light grid-item-spese">
             <h4 class="mb-2">Ultime Spese</h4>
 
-            <a href="{{ url_for('gestione.spese', file_id=file_id) }}" class="btn btn-outline-secondary btn-sm">Vedi
+            <a href="{{ url_for('gestione.spese.spese', file_id=file_id) }}"
+                class="btn btn-outline-secondary btn-sm">Vedi
                 tutte le spese</a>
             {% include "_spese.html" %}
         </div>
@@ -25,17 +26,24 @@
 
         </div>
         <!-- Mattonella Spese Ricorrenti (normale) -->
-        <div
-            class="dashboard-tile border border-2 border-secondary rounded p-3 shadow text-center bg-light grid-item-ricorrenti">
+        <a class="dashboard-tile border border-2 border-secondary rounded p-3 shadow text-center bg-light  text-decoration-none text-reset d-block h-100 grid-item-ricorrenti"
+            href="{{ url_for('gestione.ricorrenti.ricorrenti', file_id=file_id) }}" style="cursor: pointer;">
             <h4 class="mb-2">Spese Ricorrenti</h4>
-            <p class="display-6 fw-bold text-warning">{{ totale_ricorrenti }} €</p>
-        </div>
-        <!-- Mattonella Saldo (normale) -->
-        <div
-            class="dashboard-tile border border-2 border-secondary rounded p-3 shadow text-center bg-light grid-item-saldo">
-            <h4 class="mb-2">Saldo Attuale</h4>
-            <p class="display-6 fw-bold text-primary">{{ saldo_attuale }} €</p>
-        </div>
+            <i class="bi bi-arrow-repeat" style="font-size: 5rem;"></i>
+            <div>
+                <span class="btn btn-link btn-sm text-secondary p-0">Vedi tutte le Spese Ricorrenti</span>
+            </div>
+        </a>
+        <!-- Mattonella Spese Ricorrenti (normale) -->
+        <a class="dashboard-tile border border-2 border-secondary rounded p-3 shadow text-center bg-light text-decoration-none text-reset d-block h-100 grid-item-ingressi"
+            href="{{ url_for('gestione.ingressi.ingressi', file_id=file_id) }}" style="cursor: pointer;">
+            <h4 class="mb-2">Ingressi</h4>
+            <i class="bi bi-wallet-fill" style="font-size: 5rem;"></i>
+            <div>
+                <span class="btn btn-link btn-sm text-secondary p-0">Gestisci i tuoi Ingressi</span>
+            </div>
+        </a>
+
 
     </div>
 
@@ -49,7 +57,7 @@
 
         .grid-item-spese {
             grid-row: 1 / -1;
-            grid-column: 1 / span 3;
+            grid-column: 1 / 4;
         }
 
         .grid-item-inserisci-spesa {
@@ -58,52 +66,47 @@
         }
 
         .grid-item-ricorrenti {
-            grid-row: 2 / 3;
+            grid-row: 2;
             grid-column: 4 / span 1;
         }
 
-        .grid-item-saldo {
-            grid-row: 2 / 3;
-            grid-column: 5 / -1;
-        }
-
-        .grid-item-filtro-spese {
-            grid-row: -1;
-            grid-column: 1;
+        .grid-item-ingressi {
+            grid-row: auto;
+            grid-column: 5 / span 1;
         }
 
         /* Responsive: schermi <= 900px */
         @media (max-width: 900px) {
             .dashboard-grid {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(4, auto);
                 grid-template-rows: auto auto auto;
             }
 
             .grid-item-spese {
-                grid-row: 1 / 3;
-                grid-column: 1 / span 2;
+                grid-row: 1 / span 3;
+                grid-column: 1 / span 4;
             }
 
             .grid-item-inserisci-spesa {
                 grid-row: 1 / 2;
-                grid-column: 3;
+                grid-column: 5 / span 1;
             }
 
             .grid-item-ricorrenti {
-                grid-row: 2 / 3;
-                grid-column: 3;
+                grid-row: auto;
+                grid-column: auto;
             }
 
             .grid-item-saldo {
-                grid-row: 3 / 4;
-                grid-column: 1 / 3;
+                grid-row: auto;
+                grid-column: auto;
             }
         }
 
         /* Responsive: schermi <= 600px */
         @media (max-width: 600px) {
             .dashboard-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1fr;
                 grid-template-rows: auto auto auto auto;
             }
 

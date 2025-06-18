@@ -1,0 +1,23 @@
+{% import 'includes/macros.html' as macros %}
+{% extends "base.html" %}
+
+
+{% block title %}
+Gestione Spese Ricorrenti
+{% endblock %}
+
+
+{% block content %}
+
+
+{{ macros.render_table(headers, rows, url_for('gestione.ricorrenti.modifica', file_id=file_id)) }}
+
+
+<div class="border border-2 border-secondary rounded p-3 mb-4 shadow">
+
+    <h3 class="">Inserisci Nuova Spesa Ricorrente</h3>
+    {% include "_inserisci_ricorrente.html" %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}
+Gestione Spese Ricorrenti
+{% endblock %}
+
+
+{% block content %}
+
+<div class="table-responsive">
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Categoria</th>
+                <th>Data di Inizio</th>
+                <th>Tipo di Ricorrenza</th>
+                <th>Unità di Ricorrenza</th>
+                <th>Importo</th>
+                <th>Modifica</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ricorrente in ricorrenti %}
+            <form class="" method="post" action="{{ url_for('gestione.ricorrenti.modifica', file_id=file_id) }}">
+
+                <input type="hidden" name="ricorrente_id" value="{{ ricorrente.id }}">
+                <tr>
+                    <td>
+                        {{ ricorrente.nome }}
+                        <div class="collapse mt-2 collapse-modifica-{{ ricorrente.id }}">
+                            <input type="text" class="form-control form-control-sm" name="nome"
+                                id="nome-{{ ricorrente.id }}" value="{{ ricorrente.nome }}" required>
+                        </div>
+                    </td>
+                    <td>
+                        {{ ricorrente.categoria }}
+                        <div class="collapse mt-2 collapse-modifica-{{ ricorrente.id }}">
+                            <input type="text" class="form-control form-control-sm" name="categoria"
+                                id="categoria-{{ ricorrente.id }}" value="{{ ricorrente.categoria }}" required>
+                        </div>
+                    </td>
+                    <td>{{ ricorrente.data_inizio }}
+                        <div class="collapse mt-2 collapse-modifica-{{ ricorrente.id }}">
+                            <input type="date" class="form-control form-control-sm" name="data_inizio"
+                                id="data_inizio-{{ ricorrente.id }}" value="{{ ricorrente.data_inizio_form }}" required>
+                        </div>
+                    </td>
+                    <td>{{ ricorrente.tipo_ricorrenza }}
+                        <div class="collapse mt-2 collapse-modifica-{{ ricorrente.id }}">
+                            <input type="text" class="form-control form-control-sm" name="tipo_ricorrenza"
+                                id="tipo_ricorrenza-{{ ricorrente.id }}" value="{{ ricorrente.tipo_ricorrenza }}"
+                                required>
+                        </div>
+                    </td>
+                    <td>{{ ricorrente.unita_ricorrenza }}
+                        <div class="collapse mt-2 collapse-modifica-{{ ricorrente.id }}">
+                            <input type="text" class="form-control form-control-sm" name="unita_ricorrenza"
+                                id="unita_ricorrenza-{{ ricorrente.id }}" value="{{ ricorrente.unita_ricorrenza }}"
+                                required>
+                        </div>
+                    </td>
+                    <td>{{ ricorrente.euro }}
+                        <div class="collapse mt-2 collapse-modifica-{{ ricorrente.id }}">
+                            <input type="number" step="0.01" class="form-control form-control-sm" name="euro"
+                                id="euro-{{ ricorrente.id }}" value="{{ ricorrente.euro }}" required>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="ms-1" role="button" data-bs-toggle="collapse"
+                            data-bs-target=".collapse-modifica-{{ ricorrente.id }}" aria-expanded="false"
+                            aria-controls="">
+                            <i class="bi bi-pencil"></i>
+                        </span>
+                        <div class="collapse mt-2 collapse-modifica-{{ ricorrente.id }}">
+                            <input type="submit" class="form-control form-control-sm" value="Salva Modifiche">
+                        </div>
+                    </td>
+                </tr>
+            </form>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="border border-2 border-secondary rounded p-3 mb-4 shadow">
+
+    <h3 class="">Inserisci Nuova Spesa Ricorrente</h3>
+    {% include "_inserisci_ricorrente.html" %}
+
+</div>
+
+{% endblock %}
