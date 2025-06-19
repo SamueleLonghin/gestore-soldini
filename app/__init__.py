@@ -1,12 +1,14 @@
 from datetime import datetime, date
 from flask import Flask
 from dotenv import load_dotenv
-
+from db.database import init_db
 load_dotenv()
 
 
 def create_app():
     app = Flask(__name__)
+
+    init_db()
 
     @app.template_filter("date_display")
     def date_display(value):
