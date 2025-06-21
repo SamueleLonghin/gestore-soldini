@@ -1,4 +1,4 @@
-from db_interface import get_db
+from .db_interface import get_db
 
 
 def get_ingressi(gestione_id):
@@ -6,8 +6,7 @@ def get_ingressi(gestione_id):
     rows = db.execute(
         """
         SELECT i.* FROM ingressi i
-        JOIN gestione_utenti gu ON i.utente_id = gu.utente_id
-        WHERE gu.gestione_id = ?
+        WHERE i.gestione_id = ?
         ORDER BY i.data DESC
         """,
         (gestione_id,),

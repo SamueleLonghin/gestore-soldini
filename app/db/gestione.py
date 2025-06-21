@@ -1,4 +1,4 @@
-from db_interface import get_db
+from .db_interface import get_db
 
 
 def get_gestioni(utente_id):
@@ -21,12 +21,14 @@ def create_gestione(utente_id, nome):
     cur = db.execute("INSERT INTO gestioni (nome) VALUES (?)", (nome,))
     gestione_id = cur.lastrowid
 
+    print("Creata gestione", nome)
+
     # Associa subito l'utente alla gestione
     db.execute(
         "INSERT INTO gestione_utenti (utente_id, gestione_id) VALUES (?, ?)",
         (utente_id, gestione_id),
     )
-
+    print(f"Associata gestione {nome} ({gestione_id}) all'utente {utente_id}")
     # Commit finale unico
     db.commit()
 

@@ -11,15 +11,15 @@ Gestione Spese
         <div class="col-lg-8 mx-auto">
             <div class="card shadow-sm mb-4">
                 <div class="card-body">
-                    <h1 class="card-title mb-3 text-dark">Benvenuto {{ user.name }}</h1>
-                    <p class="card-text mb-4">Email: <span class="text-secondary">{{ user.email }}</span></p>
+                    <h1 class="card-title mb-3 text-dark">Benvenuto {{ user['name'] }}</h1>
+                    <p class="card-text mb-4">Email: <span class="text-secondary">{{ user['email'] }}</span></p>
                     <hr>
-                    {% if files %}
+                    {% if gestioni %}
                     <h2 class="h4 mb-3 text-dark">Le mie gestioni</h2>
                     <ul class="list-group">
-                        {% for file in files %}
+                        {% for gestione in gestioni %}
                         <li class="list-group-item">
-                            <a href="{{ url_for('gestione.gestione', file_id=file.id) }}">{{ file.name }}</a>
+                            <a href="{{ url_for('gestione.gestione', id=gestione.id) }}">{{ gestione.nome }}</a>
                         </li>
                         {% endfor %}
                     </ul>

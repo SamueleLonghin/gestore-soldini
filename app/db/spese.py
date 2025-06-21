@@ -1,4 +1,4 @@
-from db_interface import get_db
+from .db_interface import get_db
 
 
 def get_spese(gestione_id):
@@ -6,8 +6,7 @@ def get_spese(gestione_id):
     rows = db.execute(
         """
         SELECT s.* FROM spese s
-        JOIN gestione_utenti gu ON s.utente_id = gu.utente_id
-        WHERE gu.gestione_id = ?
+        WHERE s.gestione_id = ?
         ORDER BY s.data DESC
         """,
         (gestione_id,),

@@ -8,7 +8,7 @@ Gestione Ingressi
 
 {% block content %}
 
-{{ macros.render_table(headers, rows, url_for('gestione.ingressi.modifica', file_id=file_id), widget) }}
+{{ macros.render_table(headers, rows, url_for('gestione.ingressi.modifica', id=gestione_id), widget) }}
 
 <div class="border border-2 border-secondary rounded p-3 mb-4 shadow">
 

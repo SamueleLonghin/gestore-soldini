@@ -1,4 +1,4 @@
-from db_interface import get_db
+from .db_interface import get_db
 
 
 def get_spese_ricorrenti(gestione_id):
@@ -6,8 +6,8 @@ def get_spese_ricorrenti(gestione_id):
     rows = db.execute(
         """
         SELECT sr.* FROM spese_ricorrenti sr
-        JOIN gestione_utenti gu ON sr.utente_id = gu.utente_id
-        WHERE gu.gestione_id = ?
+     
+        WHERE sr.gestione_id = ?
         ORDER BY sr.data_inizio DESC
         """,
         (gestione_id,),

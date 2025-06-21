@@ -14,6 +14,7 @@ class Config:
     FORM_DATE_FORMAT = os.environ.get("FORM_DATE_FORMAT", "%Y-%m-%d")
     FORM_MONTH_FORMAT = os.environ.get("FORM_MONTH_FORMAT", "%Y-%m")
     GOOGLE_SHEET_DATE_FORMAT = os.environ.get("GOOGLE_SHEET_DATE_FORMAT", "ciao")
+    DB_DATE_FORMAT = os.environ.get("DB_DATE_FORMAT", "%Y-%m-%d")
     DISPLAY_DATE_FORMAT = os.environ.get("DISPLAY_DATE_FORMAT", "%d/%m/%Y")
     SHEET_TAB_SPESE_RICORRENTI = os.environ.get("SHEET_TAB_SPESE_RICORRENTI", "ELENCO SPESE RICORRENTI")
     SHEET_RANGE_SPESE_RICORRENTI = os.environ.get("SHEET_RANGE_SPESE_RICORRENTI", "A2:F")

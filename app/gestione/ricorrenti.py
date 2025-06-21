@@ -1,12 +1,11 @@
 from datetime import datetime
-from flask import Blueprint, current_app, redirect, render_template, request
+from flask import Blueprint, current_app, redirect, render_template, request, session
+from app.db.categorie import get_categorie
 from app.services.google_auth import login_is_required
-from app.services.sheets_api import (
+from app.db.spese_ricorrenti import (
     get_spese_ricorrenti,
-    get_spreadsheet_name,
-    get_categorie,
-    add_ricorrente,
-    update_ricorrente,
+    aggiungi_spesa_ricorrente,
+    modifica_spesa_ricorrente,
 )
 from app.services.tools import prepare_data
 
@@ -14,34 +13,33 @@ ricorrentibp = Blueprint(
     "ricorrenti",
     __name__,
     template_folder="templates/ricorrenti",
-    url_prefix="/<file_id>/ricorrenti",
+    url_prefix="/<id>/ricorrenti",
 )
 
 
 @ricorrentibp.route("/", methods=["GET"])
 @login_is_required
-def ricorrenti(file_id):
+def ricorrenti(id):
     """
     Visualizza le spese ricorrenti.
     """
-    title = get_spreadsheet_name(file_id)
-    ricorrenti = get_spese_ricorrenti(file_id)
-    categorie = get_categorie(file_id)
+    ricorrenti = get_spese_ricorrenti(id)
+    categorie = get_categorie(id)
 
     headers = {
         "nome": "Nome",
         "categoria": "Categoria",
         "data_inizio": "Data di Inizio:date",
-        "tipo_ricorrenza": "Tipo di Ricorrenza:options:giorno|mese|anno",
-        "euro": "Importo:number",
+        "frequenza_unità": "Unità di Ricorrenza:options:giorno|mese|anno",
+        "frequenza_intervallo": "Intervallo di Ricorrenza:number",
+        "importo": "Importo:number",
     }
 
+    print("Ric", ricorrenti)
     return render_template(
         "ricorrenti.html",
         ricorrenti=ricorrenti,
         rows=ricorrenti,
-        file_id=file_id,
-        title=title,
         categorie=categorie,
         headers=headers,
     )
@@ -49,62 +47,61 @@ def ricorrenti(file_id):
 
 @ricorrentibp.route("/modifica", methods=["POST"])
 @login_is_required
-def modifica(file_id):
+def modifica(id):
     ricorrente_id = request.form.get("row_id")
 
     nome = request.form.get("nome")
     categoria = request.form.get("categoria")
     data = request.form.get("data_inizio", None)
-    tipo_ricorrenza = request.form.get("tipo_ricorrenza")
-    unita_ricorrenza = request.form.get("unita_ricorrenza")
-    euro = request.form.get("euro")
+    frequenza_unità = request.form.get("frequenza_unità")
+    frequenza_intervallo = request.form.get("frequenza_intervallo")
+    importo = request.form.get("importo")
 
     data_parsed = datetime.strptime(data, current_app.config["FORM_DATE_FORMAT"])
-    data_google = prepare_data(data_parsed)
-    print(f"Data convertita: {data} -> {data_google}")
+    data_db = data_parsed.strftime(current_app.config["DB_DATE_FORMAT"])
+    print(f"Data convertita: {data} -> {data_db}")
 
-    print(
-        f"Modifico ricorrenza {ricorrente_id}: {nome}, {data_google}, {euro}, {categoria}, {tipo_ricorrenza}, {unita_ricorrenza}"
-    )
     ricorrenza = {
         "nome": nome,
-        "data": data_google,
-        "euro": euro,
+        "data_inizio": data_db,
+        "importo": importo,
         "categoria": categoria,
-        "tipo_ricorrenza": tipo_ricorrenza,
-        "unita_ricorrenza": unita_ricorrenza,
+        "frequenza_unità": frequenza_unità,
+        "frequenza_intervallo": frequenza_intervallo,
     }
-    update_ricorrente(file_id, ricorrente_id, ricorrenza)
+
+    print(f"Modifico ricorrenza {ricorrente_id}:", ricorrenza)
+
+    modifica_spesa_ricorrente(ricorrente_id, ricorrenza)
 
     return redirect(request.referrer)
 
 
 @ricorrentibp.route("/aggiungi", methods=["POST"])
 @login_is_required
-def aggiungi(file_id):
+def aggiungi(id):
+    user_id = session.get("user").get("user_id")
+
     nome = request.form.get("nome")
     categoria = request.form.get("categoria")
     data = request.form.get("data")
     tipo_ricorrenza = request.form.get("tipo_ricorrenza")
     unita_ricorrenza = request.form.get("unita_ricorrenza")
-    euro = request.form.get("euro")
+    importo = request.form.get("importo")
 
     data_parsed = datetime.strptime(data, current_app.config["FORM_DATE_FORMAT"])
-    data_google = data_parsed.strftime(current_app.config["GOOGLE_SHEET_DATE_FORMAT"])
-    print(f"Data convertita: {data} -> {data_google}")
+    data_db = data_parsed.strftime(current_app.config["DB_DATE_FORMAT"])
+    print(f"Data convertita: {data} -> {data_db}")
 
-    print(
-        f"Aggiungo ricorrenza: {nome}, {data_google}, {euro}, {categoria}, {tipo_ricorrenza}, {unita_ricorrenza}"
-    )
     ricorrenza = {
         "nome": nome,
-        "data": data_google,
-        "euro": euro,
+        "data_inizio": data_db,
+        "importo": importo,
         "categoria": categoria,
-        "tipo_ricorrenza": tipo_ricorrenza,
-        "unita_ricorrenza": unita_ricorrenza,
+        "frequenza_unità": tipo_ricorrenza,
+        "frequenza_intervallo": unita_ricorrenza,
     }
 
-    add_ricorrente(file_id, ricorrenza)
+    aggiungi_spesa_ricorrente(id, user_id, ricorrenza)
 
     return redirect(request.referrer)

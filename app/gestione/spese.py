@@ -11,14 +11,14 @@ from app.services.google_auth import login_is_required
 from flask import current_app
 from datetime import datetime
 
-spesebp = Blueprint("spese", __name__, template_folder="templates/spese", url_prefix="/<file_id>/spese")
+spesebp = Blueprint("spese", __name__, template_folder="templates/spese", url_prefix="/<id>/spese")
 
 
 @spesebp.route("/", methods=["GET", "POST"])
 @login_is_required
-def spese(file_id):
-    title = get_spreadsheet_name(file_id)
-    spese = get_spese_from_file(file_id)
+def spese(id):
+    title = get_spreadsheet_name(id)
+    spese = get_spese_from_file(id)
     descrizione = request.form.get("descrizione", "").lower()
     categoria = request.form.get("categoria", "").lower()
     data_da = request.form.get("data_da", "").lower()
@@ -43,23 +43,23 @@ def spese(file_id):
             continue
         filtrate.append(s)
 
-    categorie = get_categorie(file_id)
+    categorie = get_categorie(id)
 
     return render_template(
-        "spese.html", spese=filtrate, file_id=file_id, title=title, categorie=categorie
+        "spese.html", spese=filtrate, title=title, categorie=categorie
     )
 
 
 @spesebp.route("/aggiungi", methods=["GET"])
 @login_is_required
-def form_aggiungi(file_id):
-    categorie = get_categorie(file_id)
-    return render_template("aggiungi_spesa.html", file_id=file_id, categorie=categorie)
+def form_aggiungi(id):
+    categorie = get_categorie(id)
+    return render_template("aggiungi_spesa.html", categorie=categorie)
 
 
 @spesebp.route("/aggiungi", methods=["POST"])
 @login_is_required
-def aggiungi(file_id):
+def aggiungi(id):
     data = request.form.get("data")
     descrizione = request.form.get("descrizione")
     euro = request.form.get("euro")
@@ -76,6 +76,6 @@ def aggiungi(file_id):
         "categoria": categoria,
     }
 
-    add_spesa(file_id, nuova_spesa)
+    add_spesa(id, nuova_spesa)
 
     return redirect(request.referrer)

@@ -2,6 +2,7 @@ from datetime import datetime, date
 from flask import Flask
 from dotenv import load_dotenv
 from app.db.database import init_db
+
 load_dotenv()
 
 
@@ -12,13 +13,19 @@ def create_app():
 
     @app.template_filter("date_display")
     def date_display(value):
-        print("Converto", value)
+        if isinstance(value, str):
+            value = datetime.strptime(value, app.config["DB_DATE_FORMAT"])
+
         if isinstance(value, datetime) or isinstance(value, date):
             return value.strftime(app.config["DISPLAY_DATE_FORMAT"])
+
         return value
 
     @app.template_filter("date_form")
     def date_form(value):
+        if isinstance(value, str):
+            value = datetime.strptime(value, app.config["DB_DATE_FORMAT"])
+
         if isinstance(value, datetime) or isinstance(value, date):
             return value.strftime(app.config["FORM_DATE_FORMAT"])
         return value

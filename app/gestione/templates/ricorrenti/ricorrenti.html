@@ -10,7 +10,7 @@ Gestione Spese Ricorrenti
 {% block content %}
 
 
-{{ macros.render_table(headers, rows, url_for('gestione.ricorrenti.modifica', file_id=file_id)) }}
+{{ macros.render_table(headers, rows, url_for('gestione.ricorrenti.modifica', id=gestione_id)) }}
 
 
 <div class="border border-2 border-secondary rounded p-3 mb-4 shadow">

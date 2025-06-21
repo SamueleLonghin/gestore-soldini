@@ -1,5 +1,5 @@
 <form method="post" class="d-flex flex-row flex-wrap gap-3 align-items-start"
-    action="{{ url_for('gestione.ricorrenti.aggiungi', file_id=file_id) }}">
+    action="{{ url_for('gestione.ricorrenti.aggiungi', id=gestione_id) }}">
     <div class="flex-fill">
         <label for="nome" class="form-label mb-0">Nome</label>
         <input type="text" class="form-control" id="nome" name="nome" required>
@@ -34,7 +34,7 @@
     </div>
     <div class="flex-fill">
         <label for="importo" class="form-label mb-0">Importo</label>
-        <input type="number" step="0.01" class="form-control" id="importo" name="euro" required>
+        <input type="number" step="0.01" class="form-control" id="importo" name="importo" required>
     </div>
     <div class="align-self-end">
         <button type="submit" class="btn btn-primary">Inserisci Ricorrenza</button>

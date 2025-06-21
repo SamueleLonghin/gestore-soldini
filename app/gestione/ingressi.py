@@ -1,12 +1,7 @@
-from flask import Blueprint, redirect, render_template, request, url_for
+from flask import Blueprint, redirect, render_template, request, session, url_for
 
-from app.services.sheets_api import (
-    add_data_ingresso,
-    add_ingresso,
-    get_categorie,
-    get_ingressi,
-    update_ingresso,
-)
+from app.db.categorie import get_categorie
+from app.db.ingressi import * 
 from app.services.google_auth import login_is_required
 from flask import current_app
 from datetime import datetime
@@ -18,16 +13,16 @@ ingressibp = Blueprint(
     "ingressi",
     __name__,
     template_folder="templates/ingressi",
-    url_prefix="/<file_id>/ingressi",
+    url_prefix="/<id>/ingressi",
 )
 
 
 @ingressibp.route("/", methods=["GET"])
 @login_is_required
-def ingressi(file_id):
-    ingressi = get_ingressi(file_id)
+def ingressi(id):
+    ingressi = get_ingressi(id)
     oggi = datetime.now().strftime(current_app.config["FORM_DATE_FORMAT"])
-    categorie = get_categorie(file_id)
+    categorie = get_categorie(id)
 
     headers = {
         "data": "Data di Accreditamento:widget:widget_set_date",
@@ -41,7 +36,6 @@ def ingressi(file_id):
     }
     return render_template(
         "ingressi.html",
-        file_id=file_id,
         ingressi=ingressi,
         oggi=oggi,
         categorie=categorie,
@@ -52,21 +46,21 @@ def ingressi(file_id):
 
 @ingressibp.route("/salva_data", methods=["POST"])
 @login_is_required
-def salva_data(file_id):
+def salva_data(id):
     ingresso_id = request.form.get("row_id")
     data = request.form.get("data")
     data = parse_date(data, current_app.config["FORM_DATE_FORMAT"])
 
     print("Salvataggio data ingresso:", ingresso_id, data)
 
-    add_data_ingresso(file_id, ingresso_id, data)
+    aggiungi_data_ingresso( ingresso_id, data)
 
     return redirect(request.referrer)
 
 
 @ingressibp.route("/modifica", methods=["POST"])
 @login_is_required
-def modifica(file_id):
+def modifica(id):
     ricorrente_id = request.form.get("row_id")
 
     data = request.form.get("data")
@@ -99,14 +93,16 @@ def modifica(file_id):
         "conto": conto,
     }
 
-    update_ingresso(file_id, ricorrente_id, ingresso)
+    modifica_ingresso(ricorrente_id, ingresso)
 
     return redirect(request.referrer)
 
 
 @ingressibp.route("/aggiungi", methods=["POST"])
 @login_is_required
-def aggiungi(file_id):
+def aggiungi(id):
+    user_id = session.get('user').get('user_id')
+
     data = request.form.get("data")
     descrizione = request.form.get("descrizione")
     euro = request.form.get("euro")
@@ -135,6 +131,6 @@ def aggiungi(file_id):
         "conto": "",
     }
 
-    add_ingresso(file_id, ingresso)
+    aggiungi_ingresso(id, user_id, ingresso)
 
     return redirect(request.referrer)
