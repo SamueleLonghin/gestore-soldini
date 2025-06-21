@@ -44,7 +44,7 @@
                                 id="{{ field }}-{{ row.id }}" value="{{ row[key] | date_form }}" required>
                         </div>
                         {% elif type == "textarea" %}
-                        {{ row[key] | date_display }}
+                        {{ row[key] }}
                         <div class="collapse mt-2 collapse-modifica-{{ row.id }}">
                             <input type="textarea" class="form-control form-control-sm" name="{{ key }}"
                                 id="{{ field }}-{{ row.id }}" value="{{ row[key] }}">
