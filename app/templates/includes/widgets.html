@@ -13,12 +13,12 @@
 </span>
 <div class="collapse mt-2" id="collapse-data-{{ row.id }}">
     <form class="d-flex align-items-center gap-2" method="post"
-        action="{{ url_for('gestione.ingressi.salva_data', file_id=file_id) }}">
+        action="{{ url_for('gestione.ingressi.salva_data', id=gestione_id) }}">
         <input type="hidden" name="row_id" value="{{ row.id }}">
         <input type="date" class="form-control form-control-sm" name="data" id="data-{{ row.id }}" value="{{ oggi }}"
             required>
         <button class="btn btn-primary btn-sm"
-            formaction="{{ url_for('gestione.ingressi.salva_data', file_id=file_id) }}" type="submit">Salva</button>
+            formaction="{{ url_for('gestione.ingressi.salva_data', id=gestione_id) }}" type="submit">Salva</button>
     </form>
 </div>
 {% endif %}

@@ -13,7 +13,7 @@ def create_app():
 
     @app.template_filter("date_display")
     def date_display(value):
-        if isinstance(value, str):
+        if isinstance(value, str) and value != "":
             value = datetime.strptime(value, app.config["DB_DATE_FORMAT"])
 
         if isinstance(value, datetime) or isinstance(value, date):
@@ -23,7 +23,7 @@ def create_app():
 
     @app.template_filter("date_form")
     def date_form(value):
-        if isinstance(value, str):
+        if isinstance(value, str) and value != "":
             value = datetime.strptime(value, app.config["DB_DATE_FORMAT"])
 
         if isinstance(value, datetime) or isinstance(value, date):

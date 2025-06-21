@@ -1,7 +1,7 @@
 from flask import Blueprint, redirect, render_template, request, session, url_for
 
 from app.db.categorie import get_categorie
-from app.db.ingressi import * 
+from app.db.ingressi import *
 from app.services.google_auth import login_is_required
 from flask import current_app
 from datetime import datetime
@@ -29,11 +29,12 @@ def ingressi(id):
         "mese": "Mese",
         "anno": "Anno",
         "descrizione": "Descrizione",
-        "euro": "Importo:number",
+        "importo": "Importo:number",
         "categoria": "Categoria",
         "note": "Note:textarea",
         "conto": "Conto di Accreditamento",
     }
+    print(ingressi)
     return render_template(
         "ingressi.html",
         ingressi=ingressi,
@@ -53,7 +54,7 @@ def salva_data(id):
 
     print("Salvataggio data ingresso:", ingresso_id, data)
 
-    aggiungi_data_ingresso( ingresso_id, data)
+    aggiungi_data_ingresso(ingresso_id, data)
 
     return redirect(request.referrer)
 
@@ -65,26 +66,26 @@ def modifica(id):
 
     data = request.form.get("data")
     descrizione = request.form.get("descrizione")
-    euro = request.form.get("euro")
+    importo = request.form.get("importo")
     categoria = request.form.get("categoria")
     mese = request.form.get("mese")
     anno = request.form.get("anno")
     conto = request.form.get("conto")
     note = request.form.get("note")
 
-    data_google = ""
+    data_db = ""
 
     if data:
         data_parsed = datetime.strptime(data, current_app.config["FORM_DATE_FORMAT"])
-        data_google = prepare_data(data_parsed)
-    print(f"Data convertita: {data} -> {data_google}")
+        data_db = data_parsed.strftime(current_app.config["DB_DATE_FORMAT"])
+    print(f"Data convertita: {data} -> {data_db}")
 
     print(
-        f"Modifico ingresso {ricorrente_id}: {descrizione}, {data_google}, {euro}, {categoria}, {mese}, {anno}"
+        f"Modifico ingresso {ricorrente_id}: {descrizione}, {data_db}, {importo}, {categoria}, {mese}, {anno}"
     )
     ingresso = {
-        "data": data_google,
-        "euro": euro,
+        "data": data_db,
+        "importo": importo,
         "descrizione": descrizione,
         "categoria": categoria,
         "mese": mese,
@@ -101,34 +102,35 @@ def modifica(id):
 @ingressibp.route("/aggiungi", methods=["POST"])
 @login_is_required
 def aggiungi(id):
-    user_id = session.get('user').get('user_id')
+    user_id = session.get("user").get("user_id")
 
     data = request.form.get("data")
     descrizione = request.form.get("descrizione")
-    euro = request.form.get("euro")
+    importo = request.form.get("importo")
     categoria = request.form.get("categoria")
     mese = request.form.get("mese")
-    print("Aggiungo ingresso:", data, descrizione, euro, categoria, mese)
+    note = request.form.get("note", "")
+    conto = request.form.get("conto", "")
+    print("Aggiungo ingresso:", data, descrizione, importo, categoria, mese)
 
     # Estrai anno e mese dalla data
     mese_anno_parsed = datetime.strptime(mese, current_app.config["FORM_MONTH_FORMAT"])
     anno = mese_anno_parsed.year
     mese = mese_anno_parsed.month
-    data_google = ""
+    data_db = ""
 
     if data:
         data_parsed = datetime.strptime(data, current_app.config["FORM_DATE_FORMAT"])
-        data_google = prepare_data(data_parsed)
-
+        data_db = data_parsed.strftime(current_app.config["DB_DATE_FORMAT"])
     ingresso = {
-        "data": data_google,
-        "euro": euro,
+        "data": data_db,
+        "importo": importo,
         "descrizione": descrizione,
         "categoria": categoria,
         "mese": mese,
         "anno": anno,
-        "note": "",
-        "conto": "",
+        "note": note,
+        "conto": conto,
     }
 
     aggiungi_ingresso(id, user_id, ingresso)

@@ -3,7 +3,7 @@
         <thead>
             <tr>
                 <th>Data</th>
-                <th>Euro</th>
+                <th>Importo</th>
                 <th>Descrizione</th>
                 <th>Categoria</th>
             </tr>
@@ -12,7 +12,7 @@
             {% for spesa in spese %}
             <tr>
                 <td>{{ spesa.data | date_display }}</td>
-                <td>{{ spesa.euro }}</td>
+                <td>{{ spesa.importo }} €</td>
                 <td>{{ spesa.descrizione }}</td>
                 <td>{{ spesa.categoria }}</td>
             </tr>

@@ -1,5 +1,7 @@
+from datetime import datetime
 from flask import redirect, render_template, request, url_for
 
+from app.db.gestione import *
 from app.db.spese import get_spese
 from app.services.tools import parse_date
 from . import gestionebp
@@ -14,9 +16,10 @@ def before_request():
     gestione_id = request.view_args.get("id", None) if request.view_args else None
     current_app.jinja_env.globals["gestione_id"] = gestione_id
     if gestione_id:
-        # title = get_ges(file_id)
+        g = get_gestione(gestione_id)
+        if g:
+            current_app.jinja_env.globals["title"] = g.get("nome")
         # if title:
-        #     current_app.jinja_env.globals["title"] = title
         pass
 
 
@@ -25,7 +28,12 @@ def before_request():
 def gestione(id):
     spese = get_spese(id)
     categorie = get_categorie(id)
-    mese = {"spese": 0, "ingressi": 0, "ingressi_previsti": 0}
+    oggi = datetime.now()
+    mese = {
+        "spese": get_somma_spese_mese(id, oggi.month, oggi.year),
+        "ingressi": get_somma_ingressi_ricevuti_mese(id, oggi.month, oggi.year),
+        "ingressi_previsti": get_somma_ingressi_previsti_mese(id, oggi.month, oggi.year),
+    }
     anno = {"spese": 0, "ingressi": 0, "ingressi_previsti": 0}
 
     return render_template(
@@ -35,3 +43,12 @@ def gestione(id):
         mese=mese,
         anno=anno,
     )
+
+
+@gestionebp.route("/<id>/api/mese", methods=["GET"])
+@login_is_required
+def dati_mese(id):
+    previsti = 0
+    effettivi = 0
+    spese = 0
+    return {"ingressi_previsti": previsti, "ingressi": effettivi, "spese": spese}

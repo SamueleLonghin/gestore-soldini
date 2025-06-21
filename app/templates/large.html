@@ -14,8 +14,8 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
             <div class="container">
                 <a class="navbar-brand" href="/">Gestore Soldini</a>
-                {% if file_id %}
-                <a class="navbar-brand" href="{{ url_for('gestione.gestione', file_id=file_id) }}">{{ title }}</a>
+                {% if gestione_id%}
+                <a class="navbar-brand" href="{{ url_for('gestione.gestione', id=gestione_id) }}">/ {{ title }}</a>
                 {% endif%}
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">

@@ -18,7 +18,7 @@ def aggiungi_spesa(utente_id, gestione_id, spesa):
     db = get_db()
     db.execute(
         """
-        INSERT INTO spese (utente_id, gestione_id, data, mese, anno, importo, descrizione, categoria, id_ricorrenza)
+        INSERT INTO spese (autore_id, gestione_id, data, mese, anno, importo, descrizione, categoria, id_ricorrenza)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (

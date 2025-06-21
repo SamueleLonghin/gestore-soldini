@@ -7,7 +7,6 @@ from app.db.spese_ricorrenti import (
     aggiungi_spesa_ricorrente,
     modifica_spesa_ricorrente,
 )
-from app.services.tools import prepare_data
 
 ricorrentibp = Blueprint(
     "ricorrenti",
@@ -35,7 +34,6 @@ def ricorrenti(id):
         "importo": "Importo:number",
     }
 
-    print("Ric", ricorrenti)
     return render_template(
         "ricorrenti.html",
         ricorrenti=ricorrenti,
