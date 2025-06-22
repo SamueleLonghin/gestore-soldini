@@ -4,7 +4,7 @@ from datetime import datetime
 
 from flask import current_app
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "spese.db")
+DB_PATH = os.path.join(os.path.dirname(__file__), "database.db")
 SCHEMA_PATH = os.path.join(os.path.dirname(__file__), "schema.sql")
 
 
