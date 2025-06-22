@@ -39,5 +39,5 @@ def create_app():
 if __name__ == "__main__":
     app = create_app()
     print("Avvio dell'applicazione Flask...")
-    app.run(debug=True, port=app.config["APP_PORT"])
+    app.run(debug=False)
     print("Applicazione Flask avviata con successo.")
