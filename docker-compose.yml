@@ -2,16 +2,14 @@ version: '3.8'
 
 services:
   gestore-soldini:
-    image: python:3.12
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: gestore-soldini
-    working_dir: /app
-    volumes:
-      - .:/app
-      - gestore-soldini-data:/app/db
-    command: >
-      sh -c "pip install -r requirements.txt &&
-        flask run --host=0.0.0.0"
     ports:
-      - "${APP_PORT}:5000"
-  volumes:
-    gestore-soldini-data
+      - "${APP_PORT:-5000}:5000"
+    volumes:
+      - gestore-soldini-data:/app/db
+
+volumes:
+  gestore-soldini-data:
