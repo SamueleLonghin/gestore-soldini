@@ -11,4 +11,4 @@ services:
       sh -c "pip install -r requirements.txt &&
         flask run --host=0.0.0.0"
     ports:
-      - "101:5000"
+      - "${APP_PORT}:5000"
