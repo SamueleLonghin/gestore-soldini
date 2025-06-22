@@ -10,7 +10,7 @@ services:
       - "${APP_PORT:-5000}:5000"
     volumes:
       - .:/app
-      - gestore-soldini-data:/app/db
+      - gestore-soldini-data:/app/db/data
 
 volumes:
   gestore-soldini-data:
