@@ -1,13 +1,11 @@
-import os
 import google.auth.transport.requests
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import Flow
 from flask import session, redirect, url_for
 import functools
-from flask import request
 
 
-def oauth_flow(state=None):
+def oauth_flow():
     import os
 
     redirect_uri = os.getenv(
@@ -47,3 +45,14 @@ def get_user_info():
         headers={"Authorization": f"Bearer {credentials.token}"},
     )
     return response.json()
+
+
+def credentials_to_dict(credentials):
+    return {
+        "token": credentials.token,
+        "refresh_token": credentials.refresh_token,
+        "token_uri": credentials.token_uri,
+        "client_id": credentials.client_id,
+        "client_secret": credentials.client_secret,
+        "scopes": credentials.scopes,
+    }

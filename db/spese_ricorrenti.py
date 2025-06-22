@@ -1,4 +1,4 @@
-from .db_interface import get_db
+from db.db_interface import get_db
 
 
 def get_spese_ricorrenti(gestione_id):

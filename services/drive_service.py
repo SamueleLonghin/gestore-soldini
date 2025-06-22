@@ -1,4 +1,4 @@
-from app.services.google_service_account import get_drive_service_service_account
+from services.google_service_account import get_drive_service_service_account
 
 
 def get_shared_files_with_user(user_email):

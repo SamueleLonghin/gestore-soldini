@@ -1,9 +1,9 @@
 from flask import Blueprint, render_template, request, redirect, session
-from app.db.categorie import get_categorie
-from app.services.tools import add_args_to_url, parse_date, prepare_data
+from db.categorie import get_categorie
+from tools.dates import add_args_to_url, parse_date
 
-from app.db.spese import *
-from app.services.google_auth import login_is_required
+from db.spese import *
+from services.google_auth import login_is_required
 from flask import current_app
 from datetime import datetime
 

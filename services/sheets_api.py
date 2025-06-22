@@ -6,7 +6,7 @@ from googleapiclient.discovery import build
 from flask import current_app
 import os
 
-from app.services.tools import parse_date, prepare_data
+from tools.dates import parse_date, prepare_data
 import re
 
 INGRESSO_COLONNE = {

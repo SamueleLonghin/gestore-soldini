@@ -1,5 +1,5 @@
 from flask import current_app
-from .db_interface import get_db
+from db.db_interface import get_db
 from datetime import date
 
 
@@ -105,6 +105,7 @@ def get_somma_spese_anno(gestione_id, anno):
         ),
     ).fetchone()
     return result[0] if result and result[0] is not None else 0
+
 
 def get_somma_ingressi_previsti_mese(gestione_id, mese, anno):
     db = get_db()

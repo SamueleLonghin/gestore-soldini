@@ -1,12 +1,12 @@
 from datetime import datetime
-from flask import redirect, render_template, request, url_for
+from flask import render_template, request
 
-from app.db.gestione import *
-from app.db.spese import get_spese
-from app.services.tools import parse_date
+from db.gestione import *
+from db.spese import get_spese
+from tools.dates import parse_date
 from . import gestionebp
-from app.db.categorie import get_categorie
-from app.services.google_auth import login_is_required
+from db.categorie import get_categorie
+from services.google_auth import login_is_required
 from flask import current_app
 
 
@@ -32,7 +32,9 @@ def gestione(id):
     mese = {
         "spese": get_somma_spese_mese(id, oggi.month, oggi.year),
         "ingressi": get_somma_ingressi_ricevuti_mese(id, oggi.month, oggi.year),
-        "ingressi_previsti": get_somma_ingressi_previsti_mese(id, oggi.month, oggi.year),
+        "ingressi_previsti": get_somma_ingressi_previsti_mese(
+            id, oggi.month, oggi.year
+        ),
     }
     anno = {"spese": 0, "ingressi": 0, "ingressi_previsti": 0}
 

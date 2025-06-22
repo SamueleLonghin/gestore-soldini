@@ -1,4 +1,4 @@
-from app.db.database import get_db
+from db.database import get_db
 
 
 def get_or_create_user(email):

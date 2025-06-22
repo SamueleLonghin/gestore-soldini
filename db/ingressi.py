@@ -1,4 +1,4 @@
-from .db_interface import get_db
+from db.db_interface import get_db
 
 
 def get_ingressi(gestione_id):

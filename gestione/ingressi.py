@@ -1,12 +1,12 @@
-from flask import Blueprint, redirect, render_template, request, session, url_for
+from flask import Blueprint, redirect, render_template, request, session
 
-from app.db.categorie import get_categorie
-from app.db.ingressi import *
-from app.services.google_auth import login_is_required
+from db.categorie import get_categorie
+from db.ingressi import *
+from services.google_auth import login_is_required
 from flask import current_app
 from datetime import datetime
 
-from app.services.tools import parse_date, prepare_data
+from tools.dates import parse_date
 
 
 ingressibp = Blueprint(

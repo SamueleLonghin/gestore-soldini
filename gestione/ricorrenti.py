@@ -1,8 +1,8 @@
 from datetime import datetime
 from flask import Blueprint, current_app, redirect, render_template, request, session
-from app.db.categorie import get_categorie
-from app.services.google_auth import login_is_required
-from app.db.spese_ricorrenti import (
+from db.categorie import get_categorie
+from services.google_auth import login_is_required
+from db.spese_ricorrenti import (
     get_spese_ricorrenti,
     aggiungi_spesa_ricorrente,
     modifica_spesa_ricorrente,

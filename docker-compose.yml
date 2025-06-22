@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  quiz-andretta:
+    image: python:3.12
+    container_name: gestore-soldini
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: >
+      sh -c "pip install -r requirements.txt &&
+        flask run --host=0.0.0.0"
+    ports:
+      - "101:5000"
+    env_file:
+      - .env
