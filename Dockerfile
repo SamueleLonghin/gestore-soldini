@@ -8,7 +8,7 @@ WORKDIR /app
 
 # Clona la repo (puoi usare anche HTTPS con accesso pubblico)
 # RUN git clone https://github.com/SamueleLonghin/gestore-soldini .
-#COPY . .
+COPY . .
 
 # Installa le dipendenze
 RUN pip install --no-cache-dir -r requirements.txt
