@@ -16,4 +16,4 @@ credentials.json
 
 .env
 
-db/database.db
+db/data/*
