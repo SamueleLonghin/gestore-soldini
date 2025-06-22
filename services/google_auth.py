@@ -1,16 +1,12 @@
 import google.auth.transport.requests
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import Flow
-from flask import session, redirect, url_for
+from flask import current_app, session, redirect, url_for
 import functools
 
 
 def oauth_flow():
-    import os
-
-    redirect_uri = os.getenv(
-        "OAUTH_REDIRECT_URI", "http://localhost:5000/oauth2callback"
-    )
+    redirect_uri = current_app.config["OAUTH_REDIRECT_URI"]
 
     flow = Flow.from_client_secrets_file(
         "credentials.json",
