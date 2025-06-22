@@ -3,11 +3,10 @@ import os
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev_key")
-    GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID")
+    APP_PORT = os.environ.get("APP_PORT", 5000)
     OAUTH_REDIRECT_URI = os.environ.get(
         "OAUTH_REDIRECT_URI", "http://localhost:5000/oauth2callback"
     )
-    GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET")
     GOOGLE_DISCOVERY_URL = (
         "https://accounts.google.com/.well-known/openid-configuration"
     )

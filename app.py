@@ -22,7 +22,7 @@ def create_app():
     print("Configurazione dell'applicazione:")
     print("================================")
     for k, v in app.config.items():
-        print( k, "->", v)
+        print(k, "->", v)
     print("================================")
 
     from routes import main
@@ -39,5 +39,5 @@ def create_app():
 if __name__ == "__main__":
     app = create_app()
     print("Avvio dell'applicazione Flask...")
-    app.run(debug=True)
-    print("Applicazione Flask avviata con successo.")   
+    app.run(debug=True, port=app.config["APP_PORT"])
+    print("Applicazione Flask avviata con successo.")
