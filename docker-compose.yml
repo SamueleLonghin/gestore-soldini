@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  quiz-andretta:
+  gestore-soldini:
     image: python:3.12
     container_name: gestore-soldini
     working_dir: /app
