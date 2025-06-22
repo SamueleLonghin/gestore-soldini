@@ -1,4 +1,3 @@
-from datetime import datetime, date
 from flask import Flask
 from dotenv import load_dotenv
 from db.database import init_db
