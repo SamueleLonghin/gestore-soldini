@@ -30,7 +30,7 @@ def get_db():
 
 
 def init_db():
-    print("Controllo se il database esiste...")
+    print("Controllo se il database esiste...", os.path.abspath("db/data/database.db"))
     if not os.path.exists(DB_PATH):
         print("Database non trovato, lo creo...")
         os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
