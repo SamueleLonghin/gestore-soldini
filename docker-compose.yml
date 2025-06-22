@@ -12,5 +12,3 @@ services:
         flask run --host=0.0.0.0"
     ports:
       - "101:5000"
-    env_file:
-      - .env
