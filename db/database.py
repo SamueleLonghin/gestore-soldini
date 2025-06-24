@@ -42,3 +42,41 @@ def init_db():
         conn.close()
     else:
         print("Database già esistente, non è necessario inizializzarlo.", DB_PATH)
+
+    # Controlla se esistono script di aggiornamento nella cartella "updates"
+    UPDATES_DIR = os.path.join(os.path.dirname(__file__), "updates")
+    if os.path.exists(UPDATES_DIR):
+        update_scripts = sorted(
+            [f for f in os.listdir(UPDATES_DIR) if f.endswith(".sql")]
+        )
+        if update_scripts:
+            conn = get_db()
+            try:
+                for script in update_scripts:
+                    # Controlla se lo script è già stato eseguito
+                    cur = conn.execute(
+                        "SELECT COUNT(*) as cnt FROM versioni WHERE versione = ?",
+                        (script,),
+                    )
+                    result = cur.fetchone()
+                    if result["cnt"] == 0:
+                        print(f"Eseguo script di aggiornamento: {script}")
+                        with open(os.path.join(UPDATES_DIR, script), "r") as f:
+                            conn.executescript(f.read())
+                        conn.execute(
+                            "INSERT INTO versioni (data, versione) VALUES (?, ?)",
+                            (datetime.now().strftime("%Y-%m-%d %H:%M:%S"), script),
+                        )
+                        conn.commit()
+                        print(f"Script {script} eseguito e registrato.")
+                    else:
+                        print(f"Script {script} già eseguito, salto.")
+            except Exception as e:
+                print("Errore durante l'esecuzione degli script di aggiornamento:", e)
+            finally:
+                conn.close()
+        else:
+            print("Nessuno script di aggiornamento trovato nella cartella 'updates'.")
+    else:
+        print("Cartella 'updates' non trovata.")
+    
