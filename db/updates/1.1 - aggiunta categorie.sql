@@ -1,3 +1,14 @@
+
+CREATE TABLE IF NOT EXISTS categorie (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    macrocategoria TEXT NOT NULL,
+    gestione_id INTEGER,
+    autore_id INTEGER,
+    nome TEXT NOT NULL,
+    colore TEXT,
+    FOREIGN KEY (gestione_id) REFERENCES gestioni(id)
+);
+
 INSERT INTO categorie (macrocategoria, gestione_id, autore_id, nome, colore) VALUES
 ('Casa', NULL, NULL, 'Affitto', '#FFB300'),
 ('Casa', NULL, NULL, 'Bollette', '#FF7043'),
