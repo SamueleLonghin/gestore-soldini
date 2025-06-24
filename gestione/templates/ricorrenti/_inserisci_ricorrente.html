@@ -9,8 +9,8 @@
         <select class="form-select" name="categoria" required>
             {% for tipo, sottocategorie in categorie.items() %}
             <optgroup label="{{ tipo }}">
-                {% for categoria in sottocategorie %}
-                <option value="{{ categoria }}">{{ categoria }}</option>
+                {% for k, categoria in sottocategorie.items() %}
+                <option value="{{ k }}">{{ categoria }}</option>
                 {% endfor %}
             </optgroup>
             {% endfor %}
