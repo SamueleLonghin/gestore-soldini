@@ -1,3 +1,9 @@
+CREATE TABLE IF NOT EXISTS versioni (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    versione TEXT NOT NULL,
+    data DATE NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS utenti (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     email TEXT UNIQUE NOT NULL
@@ -16,6 +22,17 @@ CREATE TABLE IF NOT EXISTS gestione_utenti (
     FOREIGN KEY (gestione_id) REFERENCES gestioni(id),
     UNIQUE (utente_id, gestione_id) -- ogni utente può essere associato una sola volta
 );
+
+CREATE TABLE IF NOT EXISTS categorie (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    macrocategoria TEXT NOT NULL,
+    gestione_id INTEGER,
+    autore_id INTEGER,
+    nome TEXT NOT NULL,
+    colore TEXT,
+    FOREIGN KEY (gestione_id) REFERENCES gestioni(id)
+);
+
 
 CREATE TABLE IF NOT EXISTS spese (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
