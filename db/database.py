@@ -52,6 +52,16 @@ def init_db():
         if update_scripts:
             conn = get_db()
             try:
+                # Crea la tabella versioni se non esiste
+                conn.execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS versioni (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        versione TEXT NOT NULL,
+                        data DATE NOT NULL
+                    );
+                    """
+                )
                 for script in update_scripts:
                     # Controlla se lo script è già stato eseguito
                     cur = conn.execute(
