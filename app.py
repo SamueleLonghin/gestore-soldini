@@ -18,6 +18,7 @@ def create_app():
 
     # Rendi la funzione `attribute` disponibile nei template
     app.jinja_env.globals["attribute"] = getattr
+    app.jinja_env.globals["type"] = type
 
     print("Configurazione dell'applicazione:")
     print("================================")
@@ -39,5 +40,5 @@ def create_app():
 if __name__ == "__main__":
     app = create_app()
     print("Avvio dell'applicazione Flask...")
-    app.run(debug=False)
+    app.run(debug=True)
     print("Applicazione Flask avviata con successo.")

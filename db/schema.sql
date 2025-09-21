@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS spese (
     descrizione TEXT,
     categoria TEXT,
     id_ricorrenza INTEGER,
+    num_rata INTEGER NULL,
     FOREIGN KEY (gestione_id) REFERENCES gestioni(id),
     FOREIGN KEY (autore_id) REFERENCES utenti(id),
     FOREIGN KEY (id_ricorrenza) REFERENCES spese_ricorrenti(id)

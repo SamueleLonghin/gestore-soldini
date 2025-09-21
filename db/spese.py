@@ -14,12 +14,13 @@ def get_spese(gestione_id):
     return [dict(r) for r in rows]
 
 
+
 def aggiungi_spesa(utente_id, gestione_id, spesa):
     db = get_db()
     db.execute(
         """
-        INSERT INTO spese (autore_id, gestione_id, data, mese, anno, importo, descrizione, categoria, id_ricorrenza)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO spese (autore_id, gestione_id, data, mese, anno, importo, descrizione, categoria, id_ricorrenza, num_rata)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             utente_id,
@@ -31,6 +32,7 @@ def aggiungi_spesa(utente_id, gestione_id, spesa):
             spesa.get("descrizione"),
             spesa.get("categoria"),
             spesa.get("id_ricorrenza", None),
+            spesa.get("num_rata", None),
         ),
     )
     db.commit()
@@ -48,6 +50,7 @@ def modifica_spesa(spesa_id, spesa):
             descrizione = ?,
             categoria = ?,
             id_ricorrenza = ?
+            num_rata = ?
         WHERE id = ?
         """,
         (
@@ -58,6 +61,7 @@ def modifica_spesa(spesa_id, spesa):
             spesa.get("descrizione"),
             spesa.get("categoria"),
             spesa.get("id_ricorrenza", None),
+            spesa.get("num_rata", None),
             spesa_id,
         ),
     )

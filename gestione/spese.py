@@ -81,6 +81,7 @@ def aggiungi(id):
         "importo": importo,
         "descrizione": descrizione,
         "categoria": categoria,
+        "num_rata":None
     }
 
     aggiungi_spesa(user_id, id, nuova_spesa)

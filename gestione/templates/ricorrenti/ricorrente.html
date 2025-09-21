@@ -1,0 +1,30 @@
+{% import 'includes/tabella.html' as tabella %}
+{% extends "base.html" %}
+
+{% block title %}
+Dettaglio Spesa Ricorrente
+{% endblock %}
+
+{% block content %}
+
+<h1>Dettaglio Spesa Ricorrente: {{ spesa_ricorrente.nome }}</h1>
+
+<div class="card mb-4" style="background-color: {{spesa_ricorrente.categoria.colore}};">
+    <div class="card-header">
+        Dettagli Ricorrenza
+    </div>
+    <ul class="list-group list-group-flush" >
+        <li class="list-group-item"><strong>Nome:</strong> {{ spesa_ricorrente.nome }}</li>
+        <li class="list-group-item"><strong>Categoria:</strong> {{ spesa_ricorrente.categoria.nome }} - {{ spesa_ricorrente.categoria.macrocategoria }}</li>
+        <li class="list-group-item"><strong>Importo:</strong> {{ spesa_ricorrente.importo }} €</li>
+        <li class="list-group-item"><strong>Data Inizio:</strong> {{ spesa_ricorrente.data_inizio | date_display }}</li>
+        <li class="list-group-item"><strong>Ricorrenza:</strong> Ogni {{ spesa_ricorrente.frequenza_intervallo }} {{ spesa_ricorrente.frequenza_unità }}</li>
+    </ul>
+</div>
+
+
+<h2>Spese Generate (Effettuate e Pianificate)</h2>
+
+{{ tabella.render_table(table_config) }}
+
+{% endblock %}

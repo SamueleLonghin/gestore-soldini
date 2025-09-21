@@ -4,7 +4,7 @@
         <thead>
             <tr>
                 {% for key, header in headers.items() %}
-                <th>{{ header.split(':')[0] }}</th>
+                <th>{{ header.split(';')[0] }}</th>
                 {% endfor %}
             </tr>
         </thead>
@@ -14,53 +14,92 @@
                 <input type="hidden" value="{{row.id}}" name="row_id">
                 <tr>
                     {% for key, header in headers.items() %}
-                    {% set parts = header.split(':') %}
+                    {% set parts = header.split(';') %}
                     {% set field = parts[0] %}
-                    {% set type = parts[1] if parts|length > 1 else 'text' %}
+                    {% set data_type = parts[1] if parts|length > 1 else 'text' %}
+                    {% set display_value = row[key] %}
+                    {% set form_value = row[key] %}
+                    {% set is_link = data_type.startswith("link-") %}
+
 
                     <td class="">
-                        {% if parts|length > 2 and type == "options" %}
-                        {{ row[key] }}
-                        <select class="form-select form-select-sm collapse mt-2 collapse-modifica-{{ row.id }}"
-                            name="{{ key }}" id="{{ field }}-{{ row.id }}">
-                            {% for option in parts[2].split('|') %}
-                            <option value="{{ option }}" {% if row[key]==option %}selected{% endif %}>{{ option }}
-                            </option>
+                        <!-- Link -->
+                        {% if is_link %}
+                        {% set data_type = data_type.split('-')[1] %}
+                        {% set display_value = "" %}
+                        <a href="{{ row.id }}" class="text-decoration-none">{{ row[key] }}</a>
+                        {% endif %}
+                        {% if parts|length > 2 and data_type == "options" %}
+                        {% set options = parts[2]|json_deserialize %}
+                        <!-- Da implementare la modalità dove dai le opzioni con opz1,opz2... -->
+                        {% if type(options) == "str" %}
+                            {{ display_value }}
+                            <select class="form-select form-select-sm collapse mt-2 collapse-modifica-{{ row.id }}"
+                                name="{{ key }}" id="{{ field }}-{{ row.id }}">
+                                {% for option in parts[2].split('|') %}
+                                <option value="{{ option }}" {% if row[key]==option %}selected{% endif %}>{{ option }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        {% else %}
+                            {% for group, options in options.items() %}
+                                {% if type(options) == type("stringa") %}
+                                    {% if group == form_value %}
+                                        {{options}}
+                                    {%endif%}
+                                {% else %}
+                                    {% for id, label in options.items() %}
+                                        {% if id == row[key] %}
+                                            {{label}}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
                             {% endfor %}
-                        </select>
-                        {% elif parts|length > 2 and type == "widget" %}
+                            <select class="form-select form-select-sm collapse mt-2 collapse-modifica-{{ row.id }}"
+                                name="{{ key }}" id="{{ field }}-{{ row.id }}">
+                                {{ options|render_category_options(selected=row[key]) }}
+                            </select>
+                        {% endif %}
+                        {% elif parts|length > 2 and data_type == "widget" %}
                         {% set macro_name = parts[2] %}
-                            {{ attribute(widgets, macro_name)(row) }}          
+                        {{ attribute(widgets, macro_name)(row) }}
                         {% elif parts|length > 2 %}
-                        {{ row[key] }}
+                        {{ display_value }}
                         <div class="collapse mt-2 collapse-modifica-{{ row.id }}">
-                            <input type="{{ type }}" class="form-control form-control-sm" name="{{ key }}"
+                            <input type="{{ data_type }}" class="form-control form-control-sm" name="{{ key }}"
                                 id="{{ field }}-{{ row.id }}" value="{{ row[parts[2]] }}" required>
                         </div>
-                        {% elif type == "date" %}
+                        {% elif data_type == "date" %}
                         {{ row[key] | date_display }}
                         <div class="collapse mt-2 collapse-modifica-{{ row.id }}">
                             <input type="date" class="form-control form-control-sm" name="{{ key }}"
                                 id="{{ field }}-{{ row.id }}" value="{{ row[key] | date_form }}" required>
                         </div>
-                        {% elif type == "textarea" %}
-                        {{ row[key] }}
+                        {% elif data_type == "textarea" %}
+                        {{ display_value }}
                         <div class="collapse mt-2 collapse-modifica-{{ row.id }}">
                             <input type="textarea" class="form-control form-control-sm" name="{{ key }}"
-                                id="{{ field }}-{{ row.id }}" value="{{ row[key] }}">
+                                id="{{ field }}-{{ row.id }}" value="{{ form_value }}">
                         </div>
-                        {% elif type == "number" %}
-                        {{ row[key] }}
+                        {% elif data_type == "number" %}
+                        {{ display_value }}
                         <div class="collapse mt-2 collapse-modifica-{{ row.id }}">
                             <input type="number" class="form-control form-control-sm" name="{{ key }}"
-                                id="{{ field }}-{{ row.id }}" value="{{ row[key] }}" min="0.00" max="1000000.00"
+                                id="{{ field }}-{{ row.id }}" value="{{ form_value }}" min="0.00" max="1000000.00"
+                                step="0.01" required>
+                        </div>
+                        {% elif data_type == "currency" %}
+                        {{ display_value }} €
+                        <div class="collapse mt-2 collapse-modifica-{{ row.id }}">
+                            <input type="number" class="form-control form-control-sm" name="{{ key }}"
+                                id="{{ field }}-{{ row.id }}" value="{{ form_value }}" min="0.00" max="1000000.00"
                                 step="0.01" required>
                         </div>
                         {% else %}
-                        {{ row[key] }}
+                        {{ display_value }}
                         <div class="collapse mt-2 collapse-modifica-{{ row.id }}">
-                            <input type="{{ type }}" class="form-control form-control-sm" name="{{ key }}"
-                                id="{{ field }}-{{ row.id }}" value="{{ row[key] }}" required>
+                            <input type="{{ data_type }}" class="form-control form-control-sm" name="{{ key }}"
+                                id="{{ field }}-{{ row.id }}" value="{{ form_value }}" required>
                         </div>
                         {% endif %}
                     </td>

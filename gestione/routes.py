@@ -3,7 +3,6 @@ from flask import render_template, request
 
 from db.gestione import *
 from db.spese import get_spese
-from tools.dates import parse_date
 from . import gestionebp
 from db.categorie import get_categorie
 from services.google_auth import login_is_required

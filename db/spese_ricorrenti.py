@@ -12,6 +12,54 @@ def get_spese_ricorrenti(gestione_id):
         """,
         (gestione_id,),
     ).fetchall()
+    return [dict(r) for r in rows] 
+
+
+def get_spesa_ricorrente(id_spesa):
+    db = get_db()
+    row = db.execute(
+        """
+        SELECT * FROM spese_ricorrenti
+        WHERE id = ?
+        """, 
+        (id_spesa,),
+    ).fetchone()
+    return dict(row) if row else None
+
+
+def get_spese_by_spesa_ricorrente(spesa_ricorrente_id):
+    db = get_db()
+    rows = db.execute(
+        """
+        SELECT * FROM spese
+        WHERE id_ricorrenza = ?
+        ORDER BY data DESC
+        """,
+        (spesa_ricorrente_id,),
+    ).fetchall()
+    return [dict(r) for r in rows]
+
+def find_spese_by_spesa_ricorrente(spesa_ricorrente_id, num_rata=None):
+    db = get_db()
+    if num_rata == None:
+        rows = db.execute(
+            """
+            SELECT * FROM spese
+            WHERE id_ricorrenza = ?
+            ORDER BY data DESC
+            """,
+            (spesa_ricorrente_id),
+        ).fetchall()
+    else:
+        rows = db.execute(
+            """
+            SELECT * FROM spese
+            WHERE id_ricorrenza = ?
+            AND num_rata = ?
+            ORDER BY data DESC
+            """,
+            (spesa_ricorrente_id, num_rata),
+        ).fetchall()
     return [dict(r) for r in rows]
 
 

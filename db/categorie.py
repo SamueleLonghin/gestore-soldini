@@ -1,7 +1,7 @@
 from db.db_interface import get_db
 
 
-def get_categorie(gestione_id):
+def get_categorie(gestione_id, flat=False):
     db = get_db()
     cursor = db.cursor()
     cursor.execute(
@@ -9,6 +9,8 @@ def get_categorie(gestione_id):
         (gestione_id,),
     )
     rows = cursor.fetchall()
+    if flat:
+        return {row['id']:dict(row) for row in rows}
     categorie = {}
     for row in rows:
         macro = row["macrocategoria"]
@@ -17,3 +19,8 @@ def get_categorie(gestione_id):
 
         categorie.setdefault(macro, {})[k] = cat
     return categorie
+
+
+def get_nomi_categorie(gestione_id):
+    categorie = get_categorie(gestione_id, True)
+    return {k:f"{v["nome"]} - {v["macrocategoria"]}" for k,v in categorie.items()}
