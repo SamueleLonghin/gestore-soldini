@@ -1,2 +1,2 @@
 
-ALTER TABLE spese ADD num_rata INTEGER NULL;
+-- ALTER TABLE spese ADD num_rata INTEGER NULL;

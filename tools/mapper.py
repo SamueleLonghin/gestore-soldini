@@ -1,9 +1,8 @@
 # utils/categories.py
 import json
-from typing import Dict
 
 
-def serialize_options(categorie) -> str:
+def serialize_options(categorie):
     """
     -> stringa JSON compatta (UTF-8) pronta da salvare.
     """

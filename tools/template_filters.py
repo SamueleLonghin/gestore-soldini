@@ -2,9 +2,6 @@ from datetime import date, datetime
 import json
 from markupsafe import Markup, escape
 
-from tools.mapper import deserialize_options
-
-
 def init_template_filters(app):
     @app.template_filter("date_display")
     def date_display(value):
@@ -30,7 +27,14 @@ def init_template_filters(app):
         return json.loads(string)
 
     @app.template_filter("pk_to_text")
-    def pk_to_text(pk, dictionary ):
+    def pk_to_text(pk, dictionary:dict ):
+        if len(dictionary)>0 and type (list(dictionary.values())[0]) == dict:
+            for tipo, sotto in dictionary.items():
+                sotto:dict
+                for id,label in sotto.items():
+                    if str(id) == str(pk):
+                        return f"{label}"
+            return '-'
         return dictionary.get(pk,'-')
 
     @app.template_filter("render_category_options")

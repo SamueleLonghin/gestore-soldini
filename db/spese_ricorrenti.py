@@ -1,71 +1,78 @@
-from db.db_interface import get_db
+from flask import g
 
 
 def get_spese_ricorrenti(gestione_id):
-    db = get_db()
-    rows = db.execute(
+    g.cur.execute(
         """
         SELECT sr.* FROM spese_ricorrenti sr
      
-        WHERE sr.gestione_id = ?
+        WHERE sr.gestione_id = %s
         ORDER BY sr.data_inizio DESC
         """,
         (gestione_id,),
-    ).fetchall()
+    )
+    rows = g.cur.fetchall()
     return [dict(r) for r in rows] 
 
 
 def get_spesa_ricorrente(id_spesa):
-    db = get_db()
-    row = db.execute(
+    g.cur.execute(
         """
         SELECT * FROM spese_ricorrenti
-        WHERE id = ?
+        WHERE id = %s
         """, 
         (id_spesa,),
-    ).fetchone()
+    )
+    row = g.cur.fetchone()
     return dict(row) if row else None
 
 
 def get_spese_by_spesa_ricorrente(spesa_ricorrente_id):
-    db = get_db()
-    rows = db.execute(
+    g.cur.execute(
         """
         SELECT * FROM spese
-        WHERE id_ricorrenza = ?
+        WHERE id_ricorrenza = %s
         ORDER BY data DESC
         """,
         (spesa_ricorrente_id,),
-    ).fetchall()
+    )
+    rows = g.cur.fetchall()
     return [dict(r) for r in rows]
 
 def find_spese_by_spesa_ricorrente(spesa_ricorrente_id, num_rata=None):
-    db = get_db()
     if num_rata == None:
-        rows = db.execute(
+        g.cur.execute(
             """
             SELECT * FROM spese
-            WHERE id_ricorrenza = ?
+            WHERE id_ricorrenza = %s
             ORDER BY data DESC
             """,
             (spesa_ricorrente_id),
-        ).fetchall()
+        )
     else:
-        rows = db.execute(
+        g.cur.execute(
             """
             SELECT * FROM spese
-            WHERE id_ricorrenza = ?
-            AND num_rata = ?
+            WHERE id_ricorrenza = %s
+            AND num_rata = %s
             ORDER BY data DESC
             """,
             (spesa_ricorrente_id, num_rata),
-        ).fetchall()
+        )
+    rows = g.cur.fetchall()
     return [dict(r) for r in rows]
 
 
 def aggiungi_spesa_ricorrente(utente_id, gestione_id, spesa_ricorrente):
-    db = get_db()
-    db.execute(
+    g.cur.execute("SELECT id FROM gestioni WHERE id=%s", (gestione_id,))
+    if not g.cur.fetchone():
+        raise ValueError(f"Gestione {gestione_id} inesistente")
+
+    g.cur.execute("SELECT id FROM utenti WHERE id=%s", (utente_id,))
+    if not g.cur.fetchone():
+        raise ValueError(f"Utente {utente_id} inesistente")
+    
+    g.cur.execute(
         """
         INSERT INTO spese_ricorrenti (
             gestione_id,
@@ -77,7 +84,7 @@ def aggiungi_spesa_ricorrente(utente_id, gestione_id, spesa_ricorrente):
             frequenza_intervallo,
             importo
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """,
         (
             gestione_id,
@@ -90,21 +97,20 @@ def aggiungi_spesa_ricorrente(utente_id, gestione_id, spesa_ricorrente):
             spesa_ricorrente.get("importo"),
         ),
     )
-    db.commit()
+    g.db.commit()
 
 
 def modifica_spesa_ricorrente(spesa_ricorrente_id, spesa_ricorrente):
-    db = get_db()
-    db.execute(
+    g.cur.execute(
         """
         UPDATE spese_ricorrenti
-        SET nome = ?,
-            categoria = ?,
-            data_inizio = ?,
-            frequenza_unità = ?,
-            frequenza_intervallo = ?,
-            importo = ?
-        WHERE id = ?
+        SET nome = %s,
+            categoria = %s,
+            data_inizio = %s,
+            frequenza_unità = %s,
+            frequenza_intervallo = %s,
+            importo = %s
+        WHERE id = %s
         """,
         (
             spesa_ricorrente.get("nome"),
@@ -116,4 +122,4 @@ def modifica_spesa_ricorrente(spesa_ricorrente_id, spesa_ricorrente):
             spesa_ricorrente_id,
         ),
     )
-    db.commit()
+    g.db.commit()

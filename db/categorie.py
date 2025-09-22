@@ -1,14 +1,11 @@
-from db.db_interface import get_db
-
+from flask import g
 
 def get_categorie(gestione_id, flat=False):
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute(
-        "SELECT id, nome, macrocategoria, colore FROM categorie WHERE gestione_id IS NULL OR gestione_id = ?",
+    g.cur.execute(
+        "SELECT id, nome, macrocategoria, colore FROM categorie WHERE gestione_id IS NULL OR gestione_id = %s",
         (gestione_id,),
     )
-    rows = cursor.fetchall()
+    rows = g.cur.fetchall()
     if flat:
         return {row['id']:dict(row) for row in rows}
     categorie = {}

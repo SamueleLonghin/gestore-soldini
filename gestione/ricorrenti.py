@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from flask import Blueprint, current_app, redirect, render_template, request, session, url_for
-from db.categorie import get_categorie, get_nomi_categorie
+from db.categorie import get_categorie
 from db.spese import aggiungi_spesa
 from services.google_auth import login_is_required
 from db.spese_ricorrenti import (
@@ -108,7 +108,7 @@ def aggiungi(id):
         "frequenza_intervallo": unita_ricorrenza,
     }
 
-    aggiungi_spesa_ricorrente(id, user_id, ricorrenza)
+    aggiungi_spesa_ricorrente(gestione_id=id, utente_id=user_id, spesa_ricorrente=ricorrenza)
 
     return redirect(request.referrer)
 
@@ -134,8 +134,10 @@ def visualizza(id, id_spesa):
     frequenza_intervallo = spesa_ricorrente["frequenza_intervallo"]
     frequenza_unità = spesa_ricorrente["frequenza_unità"]
     i = 1
+
+    print(spese)
     while data_inizio <= data_fine_anno:
-        if(i not in spese):
+        if(i not in spese.keys()):
             spese[i] = {
                 "id": None,  # ID sarà generato al momento della creazione della spesa
                 "descrizione": f"{spesa_ricorrente["nome"]} - rata {i}",
@@ -146,12 +148,12 @@ def visualizza(id, id_spesa):
                 "stato":"pianificata" if data_corrente>= data_inizio else "futuro"
             }
 
-            if frequenza_unità == "giorno":
-                data_inizio += timedelta(days=frequenza_intervallo)
-            elif frequenza_unità == "mese":
-                data_inizio += relativedelta(months=frequenza_intervallo)
-            elif frequenza_unità == "anno":
-                data_inizio += relativedelta(years=frequenza_intervallo)
+        if frequenza_unità == "giorno":
+            data_inizio += timedelta(days=frequenza_intervallo)
+        elif frequenza_unità == "mese":
+            data_inizio += relativedelta(months=frequenza_intervallo)
+        elif frequenza_unità == "anno":
+            data_inizio += relativedelta(years=frequenza_intervallo)
         i+=1
 
     # Ordino le spese per data
@@ -159,6 +161,7 @@ def visualizza(id, id_spesa):
 
     columns = {
         "data": {"label": "Data", "type": "widget", "extra":"data", "editable": True},
+        "id": {"label": "Data", "type": "text",  "editable": True},
         "importo": {"label": "Importo", "type": "widget", "extra":"importo", "editable": True},
         "descrizione": {"label": "Descrizione", "type": "textarea", "editable": True},
         "num_rata": {"label": "Rata", "type": "number", "editable": True},

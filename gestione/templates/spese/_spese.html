@@ -14,7 +14,7 @@
                 <td>{{ spesa.data | date_display }}</td>
                 <td>{{ spesa.importo }} €</td>
                 <td>{{ spesa.descrizione }}</td>
-                <td>{{ spesa.categoria }}</td>
+                <td>{{ spesa.categoria | pk_to_text(categorie) }}</td>
             </tr>
             {% endfor %}
         </tbody>

@@ -1,12 +1,12 @@
-from db.database import get_db
+from flask import g
 
 
 def get_or_create_user(email):
-    db = get_db()
-    user = db.execute("SELECT * FROM utenti WHERE email = ?", (email,)).fetchone()
+    g.cur.execute("SELECT * FROM utenti WHERE email = %s", (email,))
+    user = g.cur.fetchone()
     if user:
         return user["id"]
-    cur = db.execute("INSERT INTO utenti (email) VALUES (?)", (email,))
-    db.commit()
-    return cur.lastrowid
+    g.cur.execute("INSERT INTO utenti (email) VALUES (%s)", (email,))
+    g.db.commit()
+    return g.cur.lastrowid
 

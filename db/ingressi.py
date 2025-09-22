@@ -1,22 +1,21 @@
-from db.db_interface import get_db
+from flask import g
 
 
 def get_ingressi(gestione_id):
-    db = get_db()
-    rows = db.execute(
+    g.cur.execute(
         """
         SELECT i.* FROM ingressi i
-        WHERE i.gestione_id = ?
+        WHERE i.gestione_id = %s
         ORDER BY i.data DESC
         """,
         (gestione_id,),
-    ).fetchall()
+    )
+    rows = g.cur.fetchall()
     return [dict(r) for r in rows]
 
 
 def aggiungi_ingresso(gestione_id, utente_id, ingresso):
-    db = get_db()
-    db.execute(
+    g.cur.execute(
         """
         INSERT INTO ingressi (
             gestione_id,
@@ -30,7 +29,7 @@ def aggiungi_ingresso(gestione_id, utente_id, ingresso):
             note,
             conto
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """,
         (
             gestione_id,
@@ -45,23 +44,22 @@ def aggiungi_ingresso(gestione_id, utente_id, ingresso):
             ingresso.get("conto"),
         ),
     )
-    db.commit()
+    g.db.commit()
 
 
 def modifica_ingresso(ingresso_id, ingresso):
-    db = get_db()
-    db.execute(
+    g.cur.execute(
         """
         UPDATE ingressi
-        SET data = ?,
-            mese = ?,
-            anno = ?,
-            importo = ?,
-            descrizione = ?,
-            categoria = ?,
-            note = ?,
-            conto = ?
-        WHERE id = ?
+        SET data = %s,
+            mese = %s,
+            anno = %s,
+            importo = %s,
+            descrizione = %s,
+            categoria = %s,
+            note = %s,
+            conto = %s
+        WHERE id = %s
         """,
         (
             ingresso.get("data"),
@@ -75,17 +73,16 @@ def modifica_ingresso(ingresso_id, ingresso):
             ingresso_id,
         ),
     )
-    db.commit()
+    g.db.commit()
 
 
 def aggiungi_data_ingresso(ingresso_id, data):
-    db = get_db()
-    db.execute(
+    g.cur.execute(
         """
         UPDATE ingressi
-        SET data = ?
-        WHERE id = ?
+        SET data = %s
+        WHERE id = %s
         """,
         (data, ingresso_id),
     )
-    db.commit()
+    g.db.commit()

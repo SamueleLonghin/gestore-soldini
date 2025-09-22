@@ -1,6 +1,6 @@
 from flask import Blueprint, redirect, render_template, request, session
 
-from db.categorie import get_categorie
+from db.categorie import get_categorie, get_nomi_categorie
 from db.ingressi import *
 from services.google_auth import login_is_required
 from flask import current_app
@@ -43,7 +43,6 @@ def ingressi(id):
         headers=headers,
         rows=ingressi,
     )
-
 
 @ingressibp.route("/salva_data", methods=["POST"])
 @login_is_required

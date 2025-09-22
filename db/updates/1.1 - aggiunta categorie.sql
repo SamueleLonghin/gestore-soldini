@@ -1,6 +1,6 @@
 
 CREATE TABLE IF NOT EXISTS categorie (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
     macrocategoria TEXT NOT NULL,
     gestione_id INTEGER,
     autore_id INTEGER,

@@ -1,26 +1,25 @@
-from db.db_interface import get_db
+from flask import g
 
 
 def get_spese(gestione_id):
-    db = get_db()
-    rows = db.execute(
+    g.cur.execute(
         """
         SELECT s.* FROM spese s
-        WHERE s.gestione_id = ?
+        WHERE s.gestione_id = %s
         ORDER BY s.data DESC
         """,
         (gestione_id,),
-    ).fetchall()
+    )
+    rows = g.cur.fetchall()
     return [dict(r) for r in rows]
 
 
 
 def aggiungi_spesa(utente_id, gestione_id, spesa):
-    db = get_db()
-    db.execute(
+    g.cur.execute(
         """
         INSERT INTO spese (autore_id, gestione_id, data, mese, anno, importo, descrizione, categoria, id_ricorrenza, num_rata)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """,
         (
             utente_id,
@@ -35,23 +34,22 @@ def aggiungi_spesa(utente_id, gestione_id, spesa):
             spesa.get("num_rata", None),
         ),
     )
-    db.commit()
+    g.db.commit()
 
 
 def modifica_spesa(spesa_id, spesa):
-    db = get_db()
-    db.execute(
+    g.cur.execute(
         """
         UPDATE spese
-        SET data = ?,
-            mese = ?,
-            anno = ?,
-            importo = ?,
-            descrizione = ?,
-            categoria = ?,
-            id_ricorrenza = ?
-            num_rata = ?
-        WHERE id = ?
+        SET data = %s,
+            mese = %s,
+            anno = %s,
+            importo = %s,
+            descrizione = %s,
+            categoria = %s,
+            id_ricorrenza = %s
+            num_rata = %s
+        WHERE id = %s
         """,
         (
             spesa.get("data"),
@@ -65,4 +63,4 @@ def modifica_spesa(spesa_id, spesa):
             spesa_id,
         ),
     )
-    db.commit()
+    g.db.commit()

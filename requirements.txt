@@ -7,3 +7,4 @@ Flask-Session
 python-dotenv
 requests
 python-dateutil
+mysql-connector-python>=9.0.0
