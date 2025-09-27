@@ -1,11 +1,12 @@
+import mimetypes
 import os
-from flask import Flask, g
+from flask import Flask, g, make_response, send_file, send_from_directory
 from dotenv import load_dotenv
 load_dotenv()
 from db.database import get_db, init_db
 from tools.template_filters import init_template_filters
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='/static', static_url_path='/static')
 
 init_db()
 
@@ -18,15 +19,32 @@ app.config.from_object("config.Config")
 app.jinja_env.globals["attribute"] = getattr
 app.jinja_env.globals["type"] = type
 
-# print("Configurazione dell'applicazione:")
-# print("================================")
-# for k, v in app.config.items():
-#     print(k, "->", v)
-print("================================")
+mimetypes.add_type('application/manifest+json', '.webmanifest')
+
+@app.route("/static/<path>")
+def send_custom_static(path):
+  response = None
+  path = path.replace('..','')
+  path = os.path.abspath(f"static/{path}")
+  print("Richiesto", path)
+  
+  if os.path.exists(path):
+    response = send_file(path)
+    # puoi anche impostare intestazioni personalizzate se necessario
+    # response.headers["XXXX"] = "XXXXX"
+    return response
+    
+  return make_response("not found", 404)
+
+
+@app.route('/sw.js')
+def sw():
+    # sw.js sta in /static, ma lo esponiamo come /sw.js
+    return send_from_directory('static', 'sw.js', mimetype='application/javascript')
 @app.before_request
 def before_request():
     # Apri connessione e cursore, disponibili in tutta la request
-    print("Before Action")
+    # print("Before Action")
     g.db = get_db()
     g.cur = g.db.cursor(dictionary=True)
 

@@ -1,5 +1,6 @@
 <form method="post" class="d-flex flex-row flex-wrap gap-3 align-items-start"
-    action="{{ url_for('gestione.spese.aggiungi', id_gestione=gestione_id) }}">
+    action="{{ url_for('gestione.spese.aggiungi', id_gestione=gestione_id) }}"
+    data-enable-async-send="1">
     <div class="mb-3 flex-fill">
         <label for="data" class="form-label mb-0">Data</label>
         <input type="date" class="form-control" id="data" name="data" required>
@@ -14,7 +15,7 @@
     </div>
     <div class="mb-3 flex-fill">
         <label for="categoria" class="form-label mb-0">Categoria</label>
-        <select class="form-select" name="categoria" required>
+        <select class="form-select" name="categoria" id="categoria" required>
             {% for tipo, sottocategorie in categorie.items() %}
             <optgroup label="{{ tipo }}">
                 {% for k, categoria in sottocategorie.items() %}
