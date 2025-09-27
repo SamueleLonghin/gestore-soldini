@@ -17,8 +17,8 @@
         <select class="form-select" name="categoria" required>
             {% for tipo, sottocategorie in categorie.items() %}
             <optgroup label="{{ tipo }}">
-                {% for categoria in sottocategorie %}
-                <option value="{{ categoria }}">{{ categoria }}</option>
+                {% for id, categoria in sottocategorie.items() %}
+                <option value="{{ id }}">{{ categoria }}</option>
                 {% endfor %}
             </optgroup>
             {% endfor %}
@@ -30,7 +30,7 @@
         <small class="form-text text-muted">Se non specificata, l'ingresso verrà memorizzato ma non ancora
             contabilizzato</small>
     </div>
-    <div class="align-self-end">
-        <button type="submit" class="btn btn-primary">Inserisci Ingresso</button>
+    <div class="flex-fill align-self-end">
+        <button type="submit" class="form-control btn btn-primary my-auto">Inserisci Ingresso</button>
     </div>
 </form>
