@@ -15,7 +15,7 @@
             <div class="container">
                 <a class="navbar-brand" href="/">Gestore Soldini</a>
                 {% if gestione_id%}
-                <a class="navbar-brand" href="{{ url_for('gestione.gestione', id=gestione_id) }}">/ {{ title }}</a>
+                <a class="navbar-brand" href="{{ url_for('gestione.gestione', id_gestione=gestione_id) }}">/ {{ title }}</a>
                 {% endif%}
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">

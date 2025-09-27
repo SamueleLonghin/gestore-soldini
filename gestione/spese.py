@@ -8,15 +8,15 @@ from flask import current_app
 from datetime import datetime
 
 spesebp = Blueprint(
-    "spese", __name__, template_folder="templates/spese", url_prefix="/<id>/spese"
+    "spese", __name__, template_folder="templates/spese", url_prefix="/<id_gestione>/spese"
 )
 
 
 @spesebp.route("/", methods=["GET", "POST"])
 @login_is_required
-def spese(id):
+def spese(id_gestione):
 
-    spese = get_spese(id)
+    spese = get_spese(id_gestione)
     descrizione = request.form.get("descrizione", "").lower()
     categoria = request.form.get("categoria", "").lower()
     data_da = request.form.get("data_da", "").lower()
@@ -48,14 +48,14 @@ def spese(id):
 
 @spesebp.route("/aggiungi", methods=["GET"])
 @login_is_required
-def form_aggiungi(id):
-    categorie = get_categorie(id)
+def form_aggiungi(id_gestione):
+    categorie = get_categorie(id_gestione)
     return render_template("aggiungi_spesa.html", categorie=categorie)
 
 
 @spesebp.route("/aggiungi", methods=["POST"])
 @login_is_required
-def aggiungi(id):
+def aggiungi(id_gestione):
     user_id = session.get("user").get("user_id")
 
     data = request.form.get("data")
@@ -84,6 +84,6 @@ def aggiungi(id):
         "num_rata":None
     }
 
-    aggiungi_spesa(user_id, id, nuova_spesa)
+    aggiungi_spesa(user_id, id_gestione, nuova_spesa)
 
     return redirect(request.referrer)

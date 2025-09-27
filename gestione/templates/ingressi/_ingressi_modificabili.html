@@ -1,0 +1,130 @@
+<div class="table-responsive">
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Descrizione</th>
+                <th>Importo</th>
+                <th>Anno</th>
+                <th>Mese</th>
+                <th>Data di Accreditamento</th> 
+                <th>Categoria</th>
+                <th>Note</th>
+                <th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ingresso in ingressi %}
+            <form action="{{url_for('gestione.ingressi.modifica', id_gestione=ingresso.gestione_id)}}" method="post">
+                <tr>
+                    <!-- DESCRIZIONE -->
+                    <td>
+                        <div class="collapse mt-2 collapse-modifica-{{ ingresso.id }} show">
+                            {{ ingresso.descrizione }}
+                        </div>
+                        <div class="collapse mt-2 collapse-modifica-{{ ingresso.id }}">
+                            <input type="text" class="form-control form-control-sm" name="descrizione"
+                                id="descrizione-form-{{ ingresso.id }}" value="{{ ingresso.descrizione }}" required>
+                        </div>
+                    </td>
+                    <!-- IMPORTO -->
+                    <td>
+                        <div class="collapse mt-2 collapse-modifica-{{ ingresso.id }} show">
+                            {{ ingresso.importo }} €
+                        </div>
+                        <div class="collapse mt-2 collapse-modifica-{{ ingresso.id }}">
+                            <input type="number" class="form-control form-control-sm" name="importo"
+                                id="importo-form-{{ ingresso.id }}" value="{{ ingresso.importo }}" min="0.00"
+                                max="1000000.00" step="0.01" required>
+                        </div>
+                    </td>
+                    <!-- ANNO -->
+                    <td>
+                        <div class="collapse mt-2 collapse-modifica-{{ ingresso.id }} show">
+                            {{ ingresso.anno }}
+                        </div>
+                        <div class="collapse mt-2 collapse-modifica-{{ ingresso.id }}">
+                            <input type="number" class="form-control form-control-sm" name="anno"
+                                id="anno-{{ ingresso.id }}" value="{{ ingresso.anno }}" required>
+                        </div>
+                    </td>
+                    <!-- MESE -->
+                    <td>
+                        <div class="collapse mt-2 collapse-modifica-{{ ingresso.id }} show">
+                            {{ ingresso.mese }}
+                        </div>
+                        <div class="collapse mt-2 collapse-modifica-{{ ingresso.id }}">
+                            <input type="number" class="form-control form-control-sm" name="mese"
+                                id="mese-form-{{ ingresso.id }}" value="{{ ingresso.mese }}" required>
+                        </div>
+                    </td>
+                    <!-- DATA -->
+                    <td>
+                        <div class="collapse mt-2 collapse-modifica-{{ ingresso.id }} show">
+                            {% if ingresso.data %}
+                            <!-- Se c'è la data mostro la data -->
+                            {{ ingresso.data | date_display }}
+                            {% else %}
+                            <!-- Se non c'è la data mostro il pulsante per inserirla facile -->
+                            <span class="text-muted" role="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapse-data-{{ ingresso.id }}" aria-expanded="false"
+                                aria-controls="collapse-data-{{ ingresso.id }}">
+                                <i class="bi bi-calendar-plus"></i>
+                                Inserisci data
+                            </span>
+                            <div class="collapse mt-2" id="collapse-data-{{ ingresso.id }}">
+                                <form class="d-flex align-items-center gap-2" method="post"
+                                    action="{{ url_for('gestione.ingressi.salva_data', id_gestione=ingresso.gestione_id) }}">
+                                    <input type="hidden" name="ingresso_id" value="{{ ingresso.id }}">
+                                    <input type="date" class="form-control form-control-sm" name="data"
+                                        id="data-{{ ingresso.id }}" value="{{ oggi }}" required>
+                                    <button class="btn btn-primary btn-sm"
+                                        formaction="{{ url_for('gestione.ingressi.salva_data', id_gestione=ingresso.gestione_id) }}"
+                                        type="submit">Salva</button>
+                                </form>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="collapse mt-2 collapse-modifica-{{ ingresso.id }}">
+                            <input type="date" class="form-control form-control-sm" name="data"
+                                id="data-form-{{ ingresso.id }}" value="{{ ingresso.data }}">
+                        </div>
+                    </td>
+                    <!-- CATEGORIA -->
+                    <td>
+                        <div class="collapse mt-2 collapse-modifica-{{ ingresso.id }} show">
+                            {{ ingresso.categoria | pk_to_text(categorie) }}
+                        </div>
+                        <div class="collapse mt-2 collapse-modifica-{{ ingresso.id }}">
+                            {{ingresso.categoria}}
+                            <select class="form-select form-select-sm" name="categoria" id="categoria-{{ ingresso.id }}"
+                                required>
+                                {{ categorie|render_category_options(selected=ingresso.categoria) }}
+                            </select>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="collapse mt-2 collapse-modifica-{{ ingresso.id }} show">
+                            {{ ingresso.note }}
+                        </div>
+                        <div class="collapse mt-2 collapse-modifica-{{ ingresso.id }}">
+                            <input type="textarea" class="form-control form-control-sm" name="note"
+                                id="note-{{ ingresso.id }}" value="{{ ingresso.note }}">
+                        </div>
+                    </td>
+                    <td>
+                        <span class="ms-1" role="button" data-bs-toggle="collapse"
+                            data-bs-target=".collapse-modifica-{{ ingresso.id }}" aria-expanded="false"
+                            aria-controls="">
+                            <i class="bi bi-pencil"></i>
+                        </span>
+                        <div class="collapse mt-2 collapse-modifica-{{ ingresso.id }}">
+                            <input type="submit" class="form-control form-control-sm" value="Salva Modifiche">
+                        </div>
+                        <input type="hidden" value="{{ingresso.id}}" name="ingresso_id">
+                    </td>
+                </tr>
+            </form>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

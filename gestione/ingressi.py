@@ -14,16 +14,16 @@ ingressibp = Blueprint(
     "ingressi",
     __name__,
     template_folder="templates/ingressi",
-    url_prefix="/<id>/ingressi",
+    url_prefix="/<id_gestione>/ingressi",
 )
 
 
 @ingressibp.route("/", methods=["GET"])
 @login_is_required
-def ingressi(id):
-    ingressi = get_ingressi(id)
+def ingressi(id_gestione):
+    ingressi = get_ingressi(id_gestione)
     oggi = datetime.now().strftime(current_app.config["FORM_DATE_FORMAT"])
-    categorie = get_categorie(id)
+    categorie = get_categorie(id_gestione)
 
     headers = {
         "descrizione": "Descrizione",
@@ -34,7 +34,7 @@ def ingressi(id):
         "categoria": "Categoria;options;" + serialize_options(categorie),
         "note": "Note;textarea",
     }
-    print(ingressi)
+    
     return render_template(
         "ingressi.html",
         ingressi=ingressi,
@@ -47,7 +47,7 @@ def ingressi(id):
 
 @ingressibp.route("/salva_data", methods=["POST"])
 @login_is_required
-def salva_data(id):
+def salva_data(id_gestione):
     ingresso_id = request.form.get("row_id")
     data = request.form.get("data")
     data = parse_date(data, current_app.config["FORM_DATE_FORMAT"])
@@ -59,10 +59,12 @@ def salva_data(id):
     return redirect(request.referrer)
 
 
+@ingressibp.route("/<id>/modifica", methods=["POST"])
 @ingressibp.route("/modifica", methods=["POST"])
 @login_is_required
-def modifica(id):
-    ricorrente_id = request.form.get("row_id")
+def modifica(id_gestione, id=None):
+    if not id:
+        id = request.form.get("ingresso_id")
 
     data = request.form.get("data")
     descrizione = request.form.get("descrizione")
@@ -79,9 +81,9 @@ def modifica(id):
         data_parsed = datetime.strptime(data, current_app.config["FORM_DATE_FORMAT"])
         data_db = data_parsed.strftime(current_app.config["DB_DATE_FORMAT"])
 
-    # print(
-    #     f"Modifico ingresso {ricorrente_id}: {descrizione}, {data_db}, {importo}, {categoria}, {mese}, {anno}, {note}"
-    # )
+    print(
+        f"Modifico ingresso {id}: {descrizione}, {data_db}, {importo}, {categoria}, {mese}, {anno}, {note}"
+    )
     ingresso = {
         "data": data_db,
         "importo": importo,
@@ -95,14 +97,14 @@ def modifica(id):
 
     print(ingresso)
 
-    modifica_ingresso(ricorrente_id, ingresso)
+    modifica_ingresso(id, ingresso)
 
     return redirect(request.referrer)
 
 
 @ingressibp.route("/aggiungi", methods=["POST"])
 @login_is_required
-def aggiungi(id):
+def aggiungi(id_gestione):
     user_id = session.get("user").get("user_id")
 
     data = request.form.get("data")
@@ -135,6 +137,6 @@ def aggiungi(id):
         "conto": conto,
     }
 
-    aggiungi_ingresso(id, user_id, ingresso)
+    aggiungi_ingresso(id_gestione, user_id, ingresso)
 
     return redirect(request.referrer)

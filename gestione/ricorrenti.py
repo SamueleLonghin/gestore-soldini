@@ -20,18 +20,18 @@ ricorrentibp = Blueprint(
     "ricorrenti",
     __name__,
     template_folder="templates/ricorrenti",
-    url_prefix="/<id>/ricorrenti",
+    url_prefix="/<id_gestione>/ricorrenti",
 )
 
 
 @ricorrentibp.route("/", methods=["GET"])
 @login_is_required
-def ricorrenti(id):
+def ricorrenti(id_gestione):
     """
     Visualizza le spese ricorrenti.
     """
-    ricorrenti = get_spese_ricorrenti(id)
-    categorie = get_categorie(id)
+    ricorrenti = get_spese_ricorrenti(id_gestione)
+    categorie = get_categorie(id_gestione)
 
     headers = {
         "nome": "Nome;link-",
@@ -53,7 +53,7 @@ def ricorrenti(id):
 
 @ricorrentibp.route("/modifica", methods=["POST"])
 @login_is_required
-def modifica(id):
+def modifica(id_gestione):
     ricorrente_id = request.form.get("row_id")
 
     nome = request.form.get("nome")
@@ -85,7 +85,7 @@ def modifica(id):
 
 @ricorrentibp.route("/aggiungi", methods=["POST"])
 @login_is_required
-def aggiungi(id):
+def aggiungi(id_gestione):
     user_id = session.get("user").get("user_id")
 
     nome = request.form.get("nome")
@@ -108,15 +108,14 @@ def aggiungi(id):
         "frequenza_intervallo": unita_ricorrenza,
     }
 
-    aggiungi_spesa_ricorrente(gestione_id=id, utente_id=user_id, spesa_ricorrente=ricorrenza)
+    aggiungi_spesa_ricorrente(gestione_id=id_gestione, utente_id=user_id, spesa_ricorrente=ricorrenza)
 
     return redirect(request.referrer)
 
 
 @ricorrentibp.route("/<id_spesa>", methods=["GET"])
 @login_is_required
-def visualizza(id, id_spesa):
-    gestione_id = id
+def visualizza(id_gestione, id_spesa):
     spesa_ricorrente = get_spesa_ricorrente(id_spesa)
     spese = get_spese_by_spesa_ricorrente(id_spesa)
 
@@ -209,7 +208,7 @@ def visualizza(id, id_spesa):
         generate_ids=True
     )
 
-    categorie = get_categorie(gestione_id,True)
+    categorie = get_categorie(id_gestione,True)
     spesa_ricorrente['categoria'] = categorie.get(int(spesa_ricorrente['categoria']),'-')
     return render_template(
         "ricorrente.html", spesa_ricorrente=spesa_ricorrente, table_config=table_config
@@ -217,9 +216,8 @@ def visualizza(id, id_spesa):
 
 @ricorrentibp.route("/<id_spesa>/convalida", methods=["POST"])
 @login_is_required
-def convalida(id, id_spesa):
+def convalida(id_gestione, id_spesa):
     user_id = session.get("user").get("user_id")
-    id_gestione = id
     id_spesa_ricorrente = id_spesa
     num_rata = request.form['num_rata']
 

@@ -12,27 +12,30 @@ from flask import current_app
 @gestionebp.before_app_request
 def before_request():
     print("Svolgo before gestione")
-    gestione_id = request.view_args.get("id", None) if request.view_args else None
+    gestione_id = request.view_args.get("id_gestione", None) if request.view_args else None
     current_app.jinja_env.globals["gestione_id"] = gestione_id
     if gestione_id:
         g = get_gestione(gestione_id)
+        # todo controllare la proprietà
         if g:
             current_app.jinja_env.globals["title"] = g.get("nome")
+        else:
+            return "Errore 403"
         # if title:
         pass
 
 
-@gestionebp.route("/<id>", methods=["GET"])
+@gestionebp.route("/<id_gestione>", methods=["GET"])
 @login_is_required
-def gestione(id):
-    spese = get_spese(id)
-    categorie = get_categorie(id)
+def gestione(id_gestione):
+    spese = get_spese(id_gestione)
+    categorie = get_categorie(id_gestione)
     oggi = datetime.now()
     mese = {
-        "spese": get_somma_spese_mese(id, oggi.month, oggi.year),
-        "ingressi": get_somma_ingressi_ricevuti_mese(id, oggi.month, oggi.year),
+        "spese": get_somma_spese_mese(id_gestione, oggi.month, oggi.year),
+        "ingressi": get_somma_ingressi_ricevuti_mese(id_gestione, oggi.month, oggi.year),
         "ingressi_previsti": get_somma_ingressi_previsti_mese(
-            id, oggi.month, oggi.year
+            id_gestione, oggi.month, oggi.year
         ),
     }
     anno = {"spese": 0, "ingressi": 0, "ingressi_previsti": 0}
@@ -46,9 +49,9 @@ def gestione(id):
     )
 
 
-@gestionebp.route("/<id>/api/mese", methods=["GET"])
+@gestionebp.route("/<id_gestione>/api/mese", methods=["GET"])
 @login_is_required
-def dati_mese(id):
+def dati_mese(id_gestione):
     previsti = 0
     effettivi = 0
     spese = 0

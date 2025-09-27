@@ -19,7 +19,7 @@ Gestione Spese
                     <ul class="list-group">
                         {% for gestione in gestioni %}
                         <li class="list-group-item">
-                            <a href="{{ url_for('gestione.gestione', id=gestione.id) }}">{{ gestione.nome }}</a>
+                            <a href="{{ url_for('gestione.gestione', id_gestione=gestione.id) }}">{{ gestione.nome }}</a>
                         </li>
                         {% endfor %}
                     </ul>

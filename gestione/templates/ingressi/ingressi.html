@@ -1,4 +1,3 @@
-{% import 'includes/widgets.html' as widget %}
 {% import 'includes/macros.html' as macros %}
 {% extends "base.html" %}
 
@@ -8,7 +7,7 @@ Gestione Ingressi
 
 {% block content %}
 
-{{ macros.render_table(headers, rows, url_for('gestione.ingressi.modifica', id=gestione_id), widget) }}
+{% include "_ingressi_modificabili.html" %}
 
 <div class="border border-2 border-secondary rounded p-3 mb-4 shadow">
 

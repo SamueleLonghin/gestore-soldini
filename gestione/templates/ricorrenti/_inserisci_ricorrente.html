@@ -1,5 +1,5 @@
 <form method="post" class="d-flex flex-row flex-wrap gap-3 align-items-start"
-    action="{{ url_for('gestione.ricorrenti.aggiungi', id=gestione_id) }}">
+    action="{{ url_for('gestione.ricorrenti.aggiungi', id_gestione=gestione_id) }}">
     <div class="flex-fill">
         <label for="nome" class="form-label mb-0">Nome</label>
         <input type="text" class="form-control" id="nome" name="nome" required>
