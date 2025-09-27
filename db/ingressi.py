@@ -48,6 +48,7 @@ def aggiungi_ingresso(gestione_id, utente_id, ingresso):
 
 
 def modifica_ingresso(ingresso_id, ingresso):
+    print(ingresso)
     g.cur.execute(
         """
         UPDATE ingressi

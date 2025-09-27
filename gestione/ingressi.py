@@ -7,6 +7,7 @@ from flask import current_app
 from datetime import datetime
 
 from tools.dates import parse_date
+from tools.mapper import serialize_options
 
 
 ingressibp = Blueprint(
@@ -25,14 +26,13 @@ def ingressi(id):
     categorie = get_categorie(id)
 
     headers = {
-        "data": "Data di Accreditamento:widget:widget_set_date",
-        "mese": "Mese",
-        "anno": "Anno",
         "descrizione": "Descrizione",
-        "importo": "Importo:number",
-        "categoria": "Categoria",
-        "note": "Note:textarea",
-        "conto": "Conto di Accreditamento",
+        "importo": "Importo;currency",
+        "anno": "Anno",
+        "mese": "Mese",
+        "data": "Data di Accreditamento;widget;widget_set_date",
+        "categoria": "Categoria;options;" + serialize_options(categorie),
+        "note": "Note;textarea",
     }
     print(ingressi)
     return render_template(
@@ -43,6 +43,7 @@ def ingressi(id):
         headers=headers,
         rows=ingressi,
     )
+
 
 @ingressibp.route("/salva_data", methods=["POST"])
 @login_is_required
@@ -77,11 +78,10 @@ def modifica(id):
     if data:
         data_parsed = datetime.strptime(data, current_app.config["FORM_DATE_FORMAT"])
         data_db = data_parsed.strftime(current_app.config["DB_DATE_FORMAT"])
-    print(f"Data convertita: {data} -> {data_db}")
 
-    print(
-        f"Modifico ingresso {ricorrente_id}: {descrizione}, {data_db}, {importo}, {categoria}, {mese}, {anno}"
-    )
+    # print(
+    #     f"Modifico ingresso {ricorrente_id}: {descrizione}, {data_db}, {importo}, {categoria}, {mese}, {anno}, {note}"
+    # )
     ingresso = {
         "data": data_db,
         "importo": importo,
@@ -92,6 +92,8 @@ def modifica(id):
         "note": note,
         "conto": conto,
     }
+
+    print(ingresso)
 
     modifica_ingresso(ricorrente_id, ingresso)
 
@@ -116,9 +118,10 @@ def aggiungi(id):
     mese_anno_parsed = datetime.strptime(mese, current_app.config["FORM_MONTH_FORMAT"])
     anno = mese_anno_parsed.year
     mese = mese_anno_parsed.month
-    data_db = ""
+    data_db = None
 
     if data:
+        print("Data", data)
         data_parsed = datetime.strptime(data, current_app.config["FORM_DATE_FORMAT"])
         data_db = data_parsed.strftime(current_app.config["DB_DATE_FORMAT"])
     ingresso = {
