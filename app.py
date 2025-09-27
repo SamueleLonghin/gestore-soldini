@@ -5,9 +5,6 @@ load_dotenv()
 from db.database import get_db, init_db
 from tools.template_filters import init_template_filters
 
-
-print(os.getenv("DB_HOST"))
-
 app = Flask(__name__)
 
 init_db()
@@ -51,9 +48,6 @@ app.register_blueprint(main)
 from gestione import gestionebp
 
 app.register_blueprint(gestionebp)
-
-
-
 
 
 if __name__ == "__main__":
