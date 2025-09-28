@@ -41,7 +41,7 @@ def spese(id_gestione):
             continue
         filtrate.append(s)
 
-    categorie = get_categorie(id)
+    categorie = get_categorie(id_gestione)
 
     return render_template("spese.html", spese=filtrate, categorie=categorie)
 
